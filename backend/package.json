@@ -1,0 +1,54 @@
+{
+  "name": "express-template",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "entry-point.js",
+  "scripts": {
+    "dev": "nodemon -V entry-point.ts",
+    "build": "node entry-point.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JudgementHC/express-template.git"
+  },
+  "author": "JudgementHC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JudgementHC/express-template/issues"
+  },
+  "homepage": "https://github.com/JudgementHC/express-template#readme",
+  "dependencies": {
+    "@types/cheerio": "^0.22.30",
+    "@types/request": "^2.48.7",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "axios": "^0.21.1",
+    "bcrypt-nodejs": "0.0.3",
+    "cheerio": "^1.0.0-rc.10",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "nodemon": "2.0.2",
+    "passport": "^0.4.1",
+    "puppeteer": "^10.2.0",
+    "puppeteer-extra": "^3.1.18",
+    "puppeteer-extra-plugin-stealth": "^2.7.8",
+    "reflect-metadata": "^0.1.13",
+    "request": "^2.88.2",
+    "tsyringe": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.13",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^16.7.5",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
+  }
+}

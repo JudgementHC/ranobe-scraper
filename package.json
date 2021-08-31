@@ -1,0 +1,14 @@
+{
+  "name": "ranobe-scrapper",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "frontend": "cd frontend && yarn start",
+    "backend": "cd backend && yarn start",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "dependencies": {
+    "concurrently": "^6.2.1"
+  },
+  "devDependencies": {}
+}
