@@ -40,6 +40,7 @@
     "puppeteer-extra-plugin-stealth": "^2.7.8",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
+    "stormdb": "^0.5.2",
     "tsyringe": "^4.6.0"
   },
   "devDependencies": {

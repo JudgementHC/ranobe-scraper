@@ -1,21 +1,12 @@
-import { Protocol } from 'puppeteer'
+import { Browser, Page, Protocol } from 'puppeteer'
 import { autoInjectable } from 'tsyringe'
 import { DefaultService } from '../tools/interfaces/RanobeService.interface'
+import { IRanobe } from '../tools/interfaces/User.interface'
 import UtilsService from './utils.service'
 
 export interface ILoginForm {
   email: string
   password: string
-}
-
-export interface IRanobeList {
-  ranobeList: Datum[]
-}
-
-export interface Datum {
-  title: string
-  href: string
-  cover: string
 }
 
 @autoInjectable()
@@ -24,7 +15,9 @@ export default class RanobeLibMeService implements DefaultService {
 
   constructor(private utils: UtilsService) {}
 
-  async login(loginForm: ILoginForm): Promise<Protocol.Network.Cookie[]> {
+  async login(
+    loginForm: ILoginForm
+  ): Promise<[Protocol.Network.Cookie[], number, IRanobe[]]> {
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
     await page.goto(this.baseUrl, {
@@ -40,25 +33,40 @@ export default class RanobeLibMeService implements DefaultService {
     await page.click('#sign-in-form .form__footer button[type=submit]')
     await page.waitForNavigation()
 
+    await page.$('body')
+
+    const userAvatar = await page.$<HTMLElement>('.header-right-menu__avatar')
+    const identifier =
+      (await userAvatar?.evaluate(img => {
+        const src = img.getAttribute('src')?.split('/') || []
+        return +(src[src.length - 2] || 0)
+      })) || 0
+
     const cookies = (await page.cookies()).filter(
       cookie => cookie.name.charAt(0) !== '_'
     )
 
+    const ranobeList = await this.getUserRanobeList(cookies)
+
     await browser.close()
 
-    return cookies
+    return [cookies, identifier, ranobeList]
   }
 
   async getUserRanobeList(
-    cookies: Protocol.Network.Cookie[]
-  ): Promise<unknown> {
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+    cookies: Protocol.Network.Cookie[],
+    page?: Page,
+    browser?: Browser
+  ): Promise<IRanobe[]> {
+    if (!page || !browser) {
+      ;[page, browser] = await this.utils.getPuppeeterStealth()
 
-    await page.setCookie(...cookies)
-    await page.goto(this.baseUrl, {
-      waitUntil: 'networkidle2'
-    })
-    await page.$('body')
+      await page.setCookie(...cookies)
+      await page.goto(this.baseUrl, {
+        waitUntil: 'networkidle2'
+      })
+      await page.$('body')
+    }
 
     const profileLink = await page.$<HTMLLinkElement>(
       '.header__item.header-right-menu a.header-right-menu__item.header-button'
@@ -81,17 +89,14 @@ export default class RanobeLibMeService implements DefaultService {
       const coverList = Array.from($covers).map(cover =>
         cover.getAttribute('style')
       )
-      const ranobeList = Array.from($titleLinks).map((title, index) => {
+
+      return Array.from($titleLinks).map((title, index) => {
         return {
           title: title.firstChild?.textContent,
           href: title.getAttribute('href'),
           cover: coverList[index]
-        }
+        } as IRanobe
       })
-
-      return {
-        ranobeList
-      }
     })
 
     browser.close()

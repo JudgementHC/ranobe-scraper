@@ -1,14 +1,19 @@
 import { RequestHandler } from 'express'
-import { Protocol } from 'puppeteer'
 import { autoInjectable } from 'tsyringe'
+import DBmodelService from '../services/DBmodel.service'
 import RanobeLibMeService, {
   ILoginForm
 } from '../services/ranobelib-me.service'
 import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
+import { IUser } from '../tools/interfaces/User.interface'
 
 @autoInjectable()
 export default class RanobeLibMeController implements IRanobeController {
-  constructor(private ranobeLibMeService: RanobeLibMeService) {}
+  dbModel: DBmodelService
+
+  constructor(private ranobeLibMeService: RanobeLibMeService) {
+    this.dbModel = new DBmodelService('RANOBELIBME')
+  }
 
   login(): RequestHandler {
     return async (req, res) => {
@@ -16,7 +21,8 @@ export default class RanobeLibMeController implements IRanobeController {
         const loginForm = req.body as ILoginForm
 
         if (loginForm.email && loginForm.password) {
-          const cookies = await this.ranobeLibMeService.login(loginForm)
+          const [cookies, identifier, ranobeList] =
+            await this.ranobeLibMeService.login(loginForm)
 
           cookies.forEach((cookie, index) => {
             res.setHeader(`ranobelib-auth_${index}`, JSON.stringify(cookie))
@@ -31,8 +37,17 @@ export default class RanobeLibMeController implements IRanobeController {
             })
           })
 
-          res.json({ domain: cookies[0].domain })
-          return
+          const user: IUser = {
+            email: loginForm.email,
+            identifier,
+            cookies,
+            ranobeList,
+            domain: cookies[0].domain
+          }
+
+          await this.dbModel.setLocalUser(user)
+
+          return res.json(user)
         }
       } catch (error) {
         console.error(error)
@@ -45,27 +60,26 @@ export default class RanobeLibMeController implements IRanobeController {
   getUserRanobeList(): RequestHandler {
     return async (req, res) => {
       try {
-        const cookies: Protocol.Network.Cookie[] = []
+        const cookies = this.dbModel.getCookies()
 
-        for (const prop in req.headers) {
-          if (prop.startsWith('ranobelib-auth')) {
-            const cookie: Protocol.Network.Cookie = JSON.parse(
-              req.headers[prop] as string
-            )
-            cookies.push(cookie)
-          }
-        }
-
-        const userListContent = await this.ranobeLibMeService.getUserRanobeList(
+        const ranobeList = await this.ranobeLibMeService.getUserRanobeList(
           cookies
         )
 
-        return res.json(userListContent)
+        await this.dbModel.setLocalList(ranobeList)
+
+        return res.json(ranobeList)
       } catch (error) {
         console.error(error)
       }
 
       res.sendStatus(404)
+    }
+  }
+
+  getLocalRanobeList(): RequestHandler {
+    return (req, res) => {
+      res.json(this.dbModel.getLocalList())
     }
   }
 }
