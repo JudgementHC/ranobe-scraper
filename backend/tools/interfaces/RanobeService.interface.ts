@@ -11,6 +11,8 @@ export interface IRanobeController {
   login(): RequestHandler
   getUserRanobeList(): RequestHandler
   getLocalRanobeList(): RequestHandler
+  search(): RequestHandler
+  getAvailableChapters(): RequestHandler
 }
 
 export interface DefaultService {

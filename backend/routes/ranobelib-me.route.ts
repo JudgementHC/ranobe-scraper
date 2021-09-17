@@ -17,7 +17,7 @@ class RanobeLibMeRouter implements IRanobeRouter {
     this.router.post('/login', this.ranobelibmeController.login())
 
     this.router.get(
-      '/getUserRanobeList',
+      '/userRanobeList',
       isAuthorized,
       this.ranobelibmeController.getUserRanobeList()
     )
@@ -25,6 +25,13 @@ class RanobeLibMeRouter implements IRanobeRouter {
     this.router.get(
       '/localRanobeList',
       this.ranobelibmeController.getLocalRanobeList()
+    )
+
+    this.router.get('/search', this.ranobelibmeController.search())
+
+    this.router.get(
+      '/availableChapters',
+      this.ranobelibmeController.getAvailableChapters()
     )
   }
 }

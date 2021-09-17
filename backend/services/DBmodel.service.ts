@@ -23,7 +23,8 @@ export default class DBmodelService {
     return this.stormDB
       .get(this.serviceName)
       .get('user')
-      .get('ranobeList') as unknown as IRanobe[]
+      .get('ranobeList')
+      .value() as unknown as IRanobe[]
   }
 
   setLocalList = async (data: IRanobe[]): Promise<void> => {
@@ -47,11 +48,16 @@ export default class DBmodelService {
   }
 
   getLocalUser = (): IUser => {
-    return this.stormDB.get(this.serviceName).get('user') as unknown as IUser
+    return this.stormDB
+      .get(this.serviceName)
+      .get('user')
+      .value() as unknown as IUser
   }
 
   getCookies = (): Protocol.Network.Cookie[] => {
     const userState = this.stormDB.get(this.serviceName).get('user')
-    return userState.get('cookies') as unknown as Protocol.Network.Cookie[]
+    return userState
+      .get('cookies')
+      .value() as unknown as Protocol.Network.Cookie[]
   }
 }

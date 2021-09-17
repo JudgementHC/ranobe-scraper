@@ -12,4 +12,5 @@ export interface IRanobe {
   title: string
   href: string
   cover: string
+  chapters?: []
 }

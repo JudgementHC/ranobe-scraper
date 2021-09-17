@@ -82,4 +82,34 @@ export default class RanobeLibMeController implements IRanobeController {
       res.json(this.dbModel.getLocalList())
     }
   }
+
+  search(): RequestHandler {
+    return async (req, res) => {
+      const { title } = req.query
+
+      if (title) {
+        const data = await this.ranobeLibMeService.search(title as string)
+
+        return res.json(data)
+      }
+
+      res.sendStatus(404)
+    }
+  }
+
+  getAvailableChapters(): RequestHandler {
+    return async (req, res) => {
+      const { title } = req.query
+
+      if (title) {
+        const data = await this.ranobeLibMeService.getAvailableChapters(
+          title as string
+        )
+
+        return res.json(data)
+      }
+
+      res.sendStatus(404)
+    }
+  }
 }
