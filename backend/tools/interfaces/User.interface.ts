@@ -12,5 +12,12 @@ export interface IRanobe {
   title: string
   href: string
   cover: string
-  chapters?: []
+  chapters?: Chapter[]
+}
+
+export interface Chapter {
+  title: string
+  href: string
+  author: string
+  date: string
 }

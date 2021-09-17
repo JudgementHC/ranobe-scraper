@@ -61,9 +61,11 @@ export default class RanobeLibMeController implements IRanobeController {
     return async (req, res) => {
       try {
         const cookies = this.dbModel.getCookies()
+        const user = this.dbModel.getLocalUser()
 
         const ranobeList = await this.ranobeLibMeService.getUserRanobeList(
-          cookies
+          cookies,
+          user.identifier
         )
 
         await this.dbModel.setLocalList(ranobeList)
@@ -99,13 +101,11 @@ export default class RanobeLibMeController implements IRanobeController {
 
   getAvailableChapters(): RequestHandler {
     return async (req, res) => {
-      const { title } = req.query
+      const title = req.query.title as string
 
       if (title) {
-        const data = await this.ranobeLibMeService.getAvailableChapters(
-          title as string
-        )
-
+        const data = await this.ranobeLibMeService.getAvailableChapters(title)
+        await this.dbModel.setChapters(title, data)
         return res.json(data)
       }
 

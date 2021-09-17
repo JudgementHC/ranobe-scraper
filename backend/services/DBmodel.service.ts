@@ -1,16 +1,27 @@
 import path from 'path'
 import { Protocol } from 'puppeteer'
 import StormDB from 'stormdb'
-import { IRanobe, IUser } from '../tools/interfaces/User.interface'
+import { Chapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
 import { TRanobeServices } from '../tools/types/Services.type'
+import fs from 'fs'
 
 export default class DBmodelService {
   private stormDB: StormDB
 
   constructor(private serviceName: TRanobeServices) {
-    const engine = new StormDB.localFileEngine(
-      path.join(__dirname, '../database/ranobe.stormdb')
-    )
+    const pathName = path.join(__dirname, '../database')
+    const fileName = 'ranobe.stormdb'
+    const fullPath = `${pathName}/${fileName}`
+
+    try {
+      fs.mkdirSync(pathName)
+    } catch (error) {
+      if (!fs.existsSync(fullPath)) {
+        fs.writeFileSync(fullPath, '')
+      }
+    }
+
+    const engine = new StormDB.localFileEngine(fullPath)
     this.stormDB = new StormDB(engine)
     this.stormDB.default({
       user: {
@@ -59,5 +70,18 @@ export default class DBmodelService {
     return userState
       .get('cookies')
       .value() as unknown as Protocol.Network.Cookie[]
+  }
+
+  setChapters = async (title: string, chapters: Chapter[]): Promise<void> => {
+    const localList = this.getLocalList()
+    const ranobe = localList.find(el => el.title === title) as IRanobe
+
+    const serviceDB = this.stormDB.get(this.serviceName)
+
+    if (ranobe) {
+      ranobe.chapters = chapters
+      serviceDB.get('user').set('ranobeList', localList)
+      await this.stormDB.save()
+    }
   }
 }

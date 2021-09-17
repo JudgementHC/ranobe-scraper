@@ -2,7 +2,7 @@ import { Browser, Page, Protocol } from 'puppeteer'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
 import { DefaultService } from '../tools/interfaces/RanobeService.interface'
-import { IRanobe } from '../tools/interfaces/User.interface'
+import { Chapter, IRanobe } from '../tools/interfaces/User.interface'
 import { ISearchResponse } from '../tools/service-responses/ranobelib-me.response'
 import UtilsService from './utils.service'
 
@@ -48,7 +48,7 @@ export default class RanobeLibMeService implements DefaultService {
       cookie => cookie.name.charAt(0) !== '_'
     )
 
-    const ranobeList = await this.getUserRanobeList(cookies)
+    const ranobeList = await this.getUserRanobeList(cookies, identifier)
 
     await browser.close()
 
@@ -57,28 +57,21 @@ export default class RanobeLibMeService implements DefaultService {
 
   async getUserRanobeList(
     cookies: Protocol.Network.Cookie[],
+    userId: number,
     page?: Page,
     browser?: Browser
   ): Promise<IRanobe[]> {
+    const ranobeListUrl = `${this.baseUrl}/user/${userId}?folder=all`
+
     if (!page || !browser) {
       ;[page, browser] = await this.utils.getPuppeeterStealth()
-
       await page.setCookie(...cookies)
-      await page.goto(this.baseUrl, {
-        waitUntil: 'networkidle2'
-      })
-      await page.$('body')
     }
 
-    // todo: необходимо в query добавить ?folder=all чтобы перейти в список всех ранобе пользователя
-    const profileLink = await page.$<HTMLLinkElement>(
-      '.header__item.header-right-menu a.header-right-menu__item.header-button'
-    )
-
-    await profileLink?.evaluate(b => b.click())
-    await page.waitForNavigation({
+    await page.goto(ranobeListUrl, {
       waitUntil: 'networkidle2'
     })
+    await page.$('body')
 
     const data = await page.evaluate(() => {
       const bookmarkItem = '.bookmark__list.paper .bookmark-item'
@@ -89,14 +82,22 @@ export default class RanobeLibMeService implements DefaultService {
         `${bookmarkItem} .bookmark-item__name`
       )
 
-      const coverList = Array.from($covers).map(cover =>
-        cover.getAttribute('style')
-      )
+      const coverList = Array.from($covers).map(cover => {
+        const attribute = cover.getAttribute('style')
+
+        if (attribute) {
+          const regex = /\((.*?)\)/gm
+          const replaced = attribute.replace(/"/gm, '').match(regex)
+          if (replaced) return replaced[0].replace('(', '').replace(')', '')
+        }
+
+        return attribute
+      })
 
       return Array.from($titleLinks).map((title, index) => {
         return {
           title: title.firstChild?.textContent,
-          href: title.getAttribute('href')?.split('?')[0],
+          href: title.getAttribute('href')?.split('?')[0].replace('/', ''),
           cover: coverList[index]
         } as IRanobe
       })
@@ -129,8 +130,8 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  async getAvailableChapters(title: string): Promise<unknown> {
-    const url = `${this.baseUrl}/${title}?section=chapters`
+  async getAvailableChapters(href: string): Promise<Chapter[]> {
+    const url = `${this.baseUrl}/${href}?section=chapters`
 
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
@@ -142,7 +143,7 @@ export default class RanobeLibMeService implements DefaultService {
       waitUntil: 'networkidle2'
     })
 
-    const data = await page.evaluate(async () => {
+    const data = (await page.evaluate(async () => {
       try {
         let currentScroll = 0
         let { scrollHeight } = document.body
@@ -206,7 +207,7 @@ export default class RanobeLibMeService implements DefaultService {
       })
 
       return innerData
-    })
+    })) as Chapter[]
 
     await browser.close()
 
