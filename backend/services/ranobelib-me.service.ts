@@ -142,71 +142,75 @@ export default class RanobeLibMeService implements DefaultService {
     await page.goto(url, {
       waitUntil: 'networkidle2'
     })
+    await page.content()
 
     const data = (await page.evaluate(async () => {
+      const innerData = new Map<string, Chapter>()
+
       try {
         let currentScroll = 0
         let { scrollHeight } = document.body
+        const scrollByY = window.innerHeight / 2
 
-        while (currentScroll !== scrollHeight) {
-          window.scrollBy(0, scrollHeight)
-          currentScroll = scrollHeight
-          await new Promise(resolve => setTimeout(resolve, 1500))
+        while (currentScroll < scrollHeight) {
+          const itemView = document.querySelectorAll(
+            '.vue-recycle-scroller__item-view'
+          )
+
+          Array.from(itemView).forEach(el => {
+            const mediaChapter = el.children[0]
+            const mediaChapterBody = mediaChapter.children[1]
+            const { children } = mediaChapterBody
+
+            if (children.length) {
+              const temp: Chapter = {
+                title: '',
+                href: '',
+                author: '',
+                date: ''
+              }
+
+              Array.from(children).forEach((el, index) => {
+                switch (index) {
+                  case 0: {
+                    const linkTag = el.children[0]
+                    temp.title = linkTag.textContent?.trim() || 'empty'
+                    temp.href = linkTag.getAttribute('href') || 'empty'
+                    break
+                  }
+
+                  case 1: {
+                    temp.author = el.textContent?.trim() || 'empty'
+                    break
+                  }
+
+                  case 2: {
+                    temp.date = el.textContent?.trim() || 'empty'
+                    break
+                  }
+
+                  default: {
+                    break
+                  }
+                }
+              })
+
+              if (!innerData.has(temp.title)) {
+                innerData.set(temp.title, temp)
+              }
+            }
+          })
+
+          window.scrollBy(0, scrollByY)
+          currentScroll += scrollByY
+          await new Promise(resolve => setTimeout(resolve, 1000))
           scrollHeight = document.body.scrollHeight
         }
       } catch (error) {
         console.error(error)
       }
 
-      const itemView = document.querySelectorAll(
-        '.vue-recycle-scroller__item-view'
-      )
-
-      const innerData = Array.from(itemView).map(el => {
-        const mediaChapter = el.children[0]
-        const mediaChapterBody = mediaChapter.children[1]
-        const { children } = mediaChapterBody
-
-        if (children.length) {
-          const temp = {
-            title: '',
-            href: '',
-            author: '',
-            date: ''
-          }
-
-          Array.from(children).forEach((el, index) => {
-            switch (index) {
-              case 0: {
-                const linkTag = el.children[0]
-                temp.title = linkTag.textContent?.trim() || 'empty'
-                temp.href = linkTag.getAttribute('href') || 'empty'
-                break
-              }
-
-              case 1: {
-                temp.author = el.textContent?.trim() || 'empty'
-                break
-              }
-
-              case 2: {
-                temp.date = el.textContent?.trim() || 'empty'
-                break
-              }
-
-              default: {
-                break
-              }
-            }
-          })
-
-          return temp
-        }
-
-        return 'Empty object'
-      })
-
-      return innerData
+      return Array.from(innerData.values())
     })) as Chapter[]
 
     await browser.close()
