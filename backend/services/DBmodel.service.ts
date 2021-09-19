@@ -30,12 +30,16 @@ export default class DBmodelService {
     })
   }
 
-  getLocalList = (): IRanobe[] => {
-    return this.stormDB
-      .get(this.serviceName)
-      .get('user')
-      .get('ranobeList')
-      .value() as unknown as IRanobe[]
+  getLocalList = (): IRanobe[] | undefined => {
+    try {
+      return this.stormDB
+        .get(this.serviceName)
+        .get('user')
+        .get('ranobeList')
+        .value() as IRanobe[]
+    } catch (error) {
+      return
+    }
   }
 
   setLocalList = async (data: IRanobe[]): Promise<void> => {
@@ -58,11 +62,12 @@ export default class DBmodelService {
     }
   }
 
-  getLocalUser = (): IUser => {
-    return this.stormDB
-      .get(this.serviceName)
-      .get('user')
-      .value() as unknown as IUser
+  getLocalUser = (): IUser | undefined => {
+    try {
+      return this.stormDB.get(this.serviceName).get('user').value() as IUser
+    } catch (error) {
+      return
+    }
   }
 
   getCookies = (): Protocol.Network.Cookie[] => {
@@ -74,14 +79,19 @@ export default class DBmodelService {
 
   setChapters = async (title: string, chapters: Chapter[]): Promise<void> => {
     const localList = this.getLocalList()
-    const ranobe = localList.find(el => el.title === title) as IRanobe
-
-    const serviceDB = this.stormDB.get(this.serviceName)
+    const ranobe = localList?.find(el => el.title === title) as IRanobe
 
     if (ranobe) {
+      const serviceDB = this.stormDB.get(this.serviceName)
       ranobe.chapters = chapters
       serviceDB.get('user').set('ranobeList', localList)
       await this.stormDB.save()
     }
+  }
+
+  getChapters = async (title: string): Promise<Chapter[] | undefined> => {
+    const localList = this.getLocalList()
+    const targetRanobe = localList?.find(ranobe => title === ranobe.title)
+    return targetRanobe?.chapters
   }
 }

@@ -9,6 +9,7 @@ import { IRanobeRouter } from '../tools/interfaces/RanobeService.interface'
   path: /ranobelibme
 */
 
+// todo: необходимо добавить type message, чтобы отправлять ошибки с бекенда на фронт
 @autoInjectable()
 class RanobeLibMeRouter implements IRanobeRouter {
   router: Router = Router()
