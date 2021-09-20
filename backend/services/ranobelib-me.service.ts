@@ -175,7 +175,8 @@ export default class RanobeLibMeService implements DefaultService {
                   case 0: {
                     const linkTag = el.children[0]
                     temp.title = linkTag.textContent?.trim() || 'empty'
-                    temp.href = linkTag.getAttribute('href') || 'empty'
+                    temp.href =
+                      linkTag.getAttribute('href')?.replace('/', '') || 'empty'
                     break
                   }
 
@@ -216,5 +217,47 @@ export default class RanobeLibMeService implements DefaultService {
     await browser.close()
 
     return data
+  }
+
+  async getChapterText(chapterHref: string): Promise<unknown> {
+    const url = `${this.baseUrl}/${chapterHref}`
+    const [page, browser] = await this.utils.getPuppeeterStealth()
+
+    await page.goto(url, {
+      waitUntil: 'networkidle2'
+    })
+    await page.content()
+
+    const textContent = await page.evaluate(() => {
+      const reader = document.querySelector(
+        '.reader-container.container.container_center'
+      )
+      return reader?.textContent
+    })
+
+    await browser.close()
+
+    const [volume, chapter] = this.parseLink(chapterHref)
+
+    return { volume, chapter, textContent }
+  }
+
+  async download(ranobeHrefList: string[]): Promise<unknown[]> {
+    const data: unknown[] = []
+
+    for await (const href of ranobeHrefList) {
+      const chapterText = await this.getChapterText(href)
+      data.push(chapterText)
+    }
+
+    return data
+  }
+
+  parseLink(link: string): string[] {
+    const parsed = link.split('/')
+    const { length } = parsed
+    const volume = parsed[length - 2] || 'volume not found'
+    const chapter = parsed[length - 1] || 'chapter not found'
+    return [volume, chapter]
   }
 }

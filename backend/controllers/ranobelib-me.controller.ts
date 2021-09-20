@@ -128,4 +128,19 @@ export default class RanobeLibMeController implements IRanobeController {
       res.sendStatus(404)
     }
   }
+
+  download(): RequestHandler {
+    return async (req, res) => {
+      type TDownloadQuery = { title: string; ranobeHrefList: string[] }
+      const { ranobeHrefList } = req.body as TDownloadQuery
+
+      const data = await this.ranobeLibMeService.download(ranobeHrefList)
+
+      if (data.length) {
+        return res.json(data)
+      }
+
+      res.sendStatus(404)
+    }
+  }
 }

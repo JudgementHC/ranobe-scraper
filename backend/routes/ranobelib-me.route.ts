@@ -34,6 +34,8 @@ class RanobeLibMeRouter implements IRanobeRouter {
       '/availableChapters',
       this.ranobelibmeController.getAvailableChapters()
     )
+
+    this.router.post('/download', this.ranobelibmeController.download())
   }
 }
 
