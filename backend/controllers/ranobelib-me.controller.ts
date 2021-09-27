@@ -1,17 +1,28 @@
 import { RequestHandler } from 'express'
+import fs from 'fs'
+import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import DBmodelService from '../services/DBmodel.service'
+import EpubGenService, { IEpubMetaData } from '../services/epub-gen.service'
 import RanobeLibMeService, {
   ILoginForm
 } from '../services/ranobelib-me.service'
+import TempDBService from '../services/temp-db.service'
+import UtilsService from '../services/utils.service'
 import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
 import { Chapter, IUser } from '../tools/interfaces/User.interface'
+import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
 
 @autoInjectable()
 export default class RanobeLibMeController implements IRanobeController {
   dbModel: DBmodelService
+  private logger = new Logger()
 
-  constructor(private ranobeLibMeService: RanobeLibMeService) {
+  constructor(
+    private ranobeLibMeService: RanobeLibMeService,
+    private tempDBService: TempDBService,
+    private utils: UtilsService
+  ) {
     this.dbModel = new DBmodelService('RANOBELIBME')
   }
 
@@ -131,13 +142,52 @@ export default class RanobeLibMeController implements IRanobeController {
 
   download(): RequestHandler {
     return async (req, res) => {
-      type TDownloadQuery = { title: string; ranobeHrefList: string[] }
-      const { ranobeHrefList } = req.body as TDownloadQuery
+      type TDownloadQuery = {
+        title: string
+        ranobeHrefList: string[]
+        reload: boolean
+      }
 
-      const data = await this.ranobeLibMeService.download(ranobeHrefList)
+      const { title, ranobeHrefList, reload } = req.body as TDownloadQuery
 
-      if (data.length) {
-        return res.json(data)
+      const { start, end } =
+        this.ranobeLibMeService.getChaptersRange(ranobeHrefList)
+
+      const fileName = this.utils.getTempRanobePattern(title, start, end)
+      let file
+
+      if (!reload && fs.existsSync(fileName)) {
+        file = JSON.parse(fs.readFileSync(fileName).toString())
+      }
+
+      try {
+        let readerContainer: IReaderContainer[]
+
+        if (!file) {
+          readerContainer = await this.ranobeLibMeService.download(
+            ranobeHrefList
+          )
+        } else {
+          readerContainer = file
+        }
+
+        const metadata: IEpubMetaData = {
+          title,
+          cover: 'cover.jpg',
+          images: []
+        }
+
+        await this.tempDBService.saveRanobeData(
+          { title, start, end },
+          readerContainer
+        )
+
+        const epubGenService = new EpubGenService(metadata, readerContainer)
+        await epubGenService.generate()
+
+        return res.sendStatus(200)
+      } catch (error) {
+        this.logger.error(error as Error)
       }
 
       res.sendStatus(404)

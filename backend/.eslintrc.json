@@ -15,7 +15,8 @@
         "allowSingleExtends": true
       }
     ],
-    "@typescript-eslint/no-extra-semi": "off"
+    "@typescript-eslint/no-extra-semi": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "extends": [
     "eslint:recommended",

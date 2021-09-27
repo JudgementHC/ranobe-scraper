@@ -7,10 +7,17 @@ export interface ISearchResponse {
   eng_name: string
   rate_avg: string
   type_id: number
-  covers: Covers
+  covers: ICovers
 }
 
-export interface Covers {
+export interface ICovers {
   default: string
   thumbnail: string
+}
+
+export interface IReaderContainer {
+  title: string
+  volume: string
+  chapter: string
+  textContent: string
 }

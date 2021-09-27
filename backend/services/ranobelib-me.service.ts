@@ -1,9 +1,13 @@
 import { Browser, Page, Protocol } from 'puppeteer'
+import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
 import { DefaultService } from '../tools/interfaces/RanobeService.interface'
 import { Chapter, IRanobe } from '../tools/interfaces/User.interface'
-import { ISearchResponse } from '../tools/service-responses/ranobelib-me.response'
+import {
+  IReaderContainer,
+  ISearchResponse
+} from '../tools/service-responses/ranobelib-me.response'
 import UtilsService from './utils.service'
 
 export interface ILoginForm {
@@ -14,6 +18,7 @@ export interface ILoginForm {
 @autoInjectable()
 export default class RanobeLibMeService implements DefaultService {
   baseUrl = ERanobeUrls.RANOBELIBME
+  logger = new Logger()
 
   constructor(private utils: UtilsService) {}
 
@@ -208,7 +213,7 @@ export default class RanobeLibMeService implements DefaultService {
           scrollHeight = document.body.scrollHeight
         }
       } catch (error) {
-        console.error(error)
+        this.logger.error(error)
       }
 
       return Array.from(innerData.values())
@@ -219,12 +224,14 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  async getChapterText(chapterHref: string): Promise<unknown> {
+  // todo: добавить в возвращаемом значении title, чтобы избавиться от sheet
+  async getChapterText(chapterHref: string): Promise<IReaderContainer> {
     const url = `${this.baseUrl}/${chapterHref}`
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
     await page.goto(url, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'networkidle2',
+      timeout: 0
     })
     await page.content()
 
@@ -232,32 +239,53 @@ export default class RanobeLibMeService implements DefaultService {
       const reader = document.querySelector(
         '.reader-container.container.container_center'
       )
-      return reader?.textContent
+      return reader?.innerHTML || ''
     })
 
     await browser.close()
 
     const [volume, chapter] = this.parseLink(chapterHref)
 
-    return { volume, chapter, textContent }
+    return {
+      title: `Volume: ${volume}. Chapter: ${chapter}`,
+      volume,
+      chapter,
+      textContent
+    }
   }
 
-  async download(ranobeHrefList: string[]): Promise<unknown[]> {
-    const data: unknown[] = []
+  async download(ranobeHrefList: string[]): Promise<IReaderContainer[]> {
+    const readerContainer: IReaderContainer[] = []
 
-    for await (const href of ranobeHrefList) {
-      const chapterText = await this.getChapterText(href)
-      data.push(chapterText)
+    for (const href of ranobeHrefList) {
+      const data = await this.getChapterText(href)
+      readerContainer.push(data)
     }
 
-    return data
+    return readerContainer
   }
 
   parseLink(link: string): string[] {
-    const parsed = link.split('/')
-    const { length } = parsed
-    const volume = parsed[length - 2] || 'volume not found'
-    const chapter = parsed[length - 1] || 'chapter not found'
-    return [volume, chapter]
+    if (link) {
+      const parsed = link.split('/')
+      const { length } = parsed
+      const volume = parsed[length - 2].replace('v', '') || 'volume not found'
+      const chapter = parsed[length - 1].replace('c', '') || 'chapter not found'
+      return [volume, chapter]
+    }
+    return ['undefind', 'undefind']
+  }
+
+  getChaptersRange(ranobeHrefList: string[]): { start: string; end: string } {
+    let [, start] = this.parseLink(ranobeHrefList[0])
+    let [, end] = this.parseLink(ranobeHrefList[1])
+
+    if (start > end) {
+      const temp = start
+      start = end
+      end = temp
+    }
+
+    return { start, end }
   }
 }

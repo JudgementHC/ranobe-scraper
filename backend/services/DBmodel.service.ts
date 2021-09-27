@@ -1,12 +1,14 @@
+import fs from 'fs'
 import path from 'path'
 import { Protocol } from 'puppeteer'
 import StormDB from 'stormdb'
+import { Logger } from 'tslog'
 import { Chapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
 import { TRanobeServices } from '../tools/types/Services.type'
-import fs from 'fs'
 
 export default class DBmodelService {
   private stormDB: StormDB
+  private logger = new Logger()
 
   constructor(private serviceName: TRanobeServices) {
     const pathName = path.join(__dirname, '../database')
@@ -49,7 +51,7 @@ export default class DBmodelService {
       list.set(data)
       await list.save()
     } catch (error) {
-      console.error(error)
+      this.logger.error(error)
     }
   }
 
@@ -58,7 +60,7 @@ export default class DBmodelService {
       this.stormDB.get(this.serviceName).set('user', user)
       await this.stormDB.save()
     } catch (error) {
-      console.error(error)
+      this.logger.error(error)
     }
   }
 
