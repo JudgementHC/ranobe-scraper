@@ -1,10 +1,23 @@
 import { Container } from '@material-ui/core'
-import styles from './App.module.scss'
+import { useEffect, useState } from 'react'
+import ListComponent from '../../components/list/List.component'
+import apiAxios from '../../tools/axios'
+import { IRanobe } from '../../tools/responses/api.interface'
 
 function App(): JSX.Element {
+  const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
+
+  useEffect(() => {
+    const fetchRanobe = async () => {
+      const response = (await apiAxios.get('/localRanobeList')) as IRanobe[]
+      setRanobeList(response)
+    }
+    fetchRanobe()
+  }, [])
+
   return (
     <Container>
-      <h4 className={styles.some}>some</h4>
+      <ListComponent ranobeList={ranobeList}></ListComponent>
     </Container>
   )
 }
