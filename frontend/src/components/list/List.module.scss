@@ -1,8 +1,18 @@
-.listWrapper {
-  display: flex;
-  align-items: center;
-}
+.fit {
+  &__wrap {
+    position: relative;
+    max-width: 15%;
+    width: 100%;
+    margin-right: 15px;
+    padding-bottom: 20%;
+  }
 
-.image {
-  margin-right: 15px;
+  &__image {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
 }

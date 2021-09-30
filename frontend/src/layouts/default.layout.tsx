@@ -1,10 +1,15 @@
 import {
+  Box,
   createTheme,
   CssBaseline,
   ThemeProvider,
   useMediaQuery
 } from '@material-ui/core'
-import { useMemo } from 'react'
+import { CSSProperties, useMemo } from 'react'
+import Footer from '../components/footer/Footer.component'
+import Header from '../components/header/Header.component'
+
+const headerFooterStyles: CSSProperties = { flex: '0 1 auto' }
 
 const DefaultLayout: React.FC<unknown> = props => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
@@ -22,11 +27,17 @@ const DefaultLayout: React.FC<unknown> = props => {
     <ThemeProvider theme={theme}>
       <CssBaseline></CssBaseline>
 
-      <header>header</header>
+      <Box
+        sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}
+      >
+        <Header style={headerFooterStyles}></Header>
 
-      <main>{props.children}</main>
+        <Box sx={{ marginY: '30px', flex: '1 0 auto' }}>
+          <main>{props.children}</main>
+        </Box>
 
-      <footer>footer</footer>
+        <Footer style={headerFooterStyles}></Footer>
+      </Box>
     </ThemeProvider>
   )
 }

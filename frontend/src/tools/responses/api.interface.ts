@@ -12,7 +12,7 @@ export interface IRanobe {
   title: string
   href: string
   cover: string
-  checked?: false
+  checked: boolean
   chapters?: Chapter[]
 }
 

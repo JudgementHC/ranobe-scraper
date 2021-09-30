@@ -1,23 +1,29 @@
-import { Container } from '@material-ui/core'
-import { useEffect, useState } from 'react'
-import ListComponent from '../../components/list/List.component'
-import apiAxios from '../../tools/axios'
-import { IRanobe } from '../../tools/responses/api.interface'
+import { Box, Button, Container, Typography } from '@material-ui/core'
+import { Link } from 'react-router-dom'
+
+const ranobeServiceList = [
+  {
+    href: '/ranobelibme',
+    title: 'Ranobelibme'
+  }
+]
 
 function App(): JSX.Element {
-  const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
-
-  useEffect(() => {
-    const fetchRanobe = async () => {
-      const response = (await apiAxios.get('/localRanobeList')) as IRanobe[]
-      setRanobeList(response)
-    }
-    fetchRanobe()
-  }, [])
-
   return (
     <Container>
-      <ListComponent ranobeList={ranobeList}></ListComponent>
+      <Typography variant="h4" style={{ marginBottom: '30px' }}>
+        Services:{' '}
+      </Typography>
+
+      <Box sx={{ display: 'flex' }}>
+        {ranobeServiceList.map((service, index) => (
+          <Link key={index} to={service.href}>
+            <Button variant="contained" color="primary">
+              {service.title}
+            </Button>
+          </Link>
+        ))}
+      </Box>
     </Container>
   )
 }

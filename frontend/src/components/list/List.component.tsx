@@ -1,51 +1,62 @@
 import {
+  Box,
   Checkbox,
   Divider,
   List,
   ListItem,
-  ListItemText
+  Typography
 } from '@material-ui/core'
 import { ChangeEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { ERanobeUrls } from '../../tools/enums/Services.enum'
 import { IRanobe } from '../../tools/responses/api.interface'
 import style from './List.module.scss'
 
 interface IListProps {
   ranobeList: IRanobe[]
+  onCheck: (event: ChangeEvent, checked: boolean) => void
 }
 
-function ListComponent({ ranobeList }: IListProps): JSX.Element {
-  const onChange = (event: ChangeEvent, checked: boolean) => {
-    console.info(checked)
-  }
-
+export default function ListComponent(props: IListProps): JSX.Element {
   return (
     <List>
-      {ranobeList.map((ranobe, index) => {
+      {props.ranobeList.map((ranobe, index) => {
         return (
-          <div className={style.listWrapper} key={index}>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', mb: '15px' }}
+            key={index}
+          >
             <Checkbox
+              name={index.toString()}
               color="primary"
               checked={ranobe.checked}
-              onChange={onChange}
+              onChange={props.onCheck}
             />
 
-            <ListItem alignItems="center">
-              <img
-                className={style.image}
-                src={`${ERanobeUrls.STATICLIB}/${ranobe.cover}`}
-                alt={ranobe.title}
-                loading="lazy"
-              />
-              <ListItemText primary={ranobe.title} />
+            <ListItem>
+              <Link
+                style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                to={`/ranobelibme/${ranobe.href}`}
+              >
+                <div className={style.fit__wrap}>
+                  <img
+                    className={style.fit__image}
+                    src={`${ERanobeUrls.STATICLIB}/${ranobe.cover}`}
+                    alt={ranobe.title}
+                    loading="lazy"
+                  />
+                </div>
+
+                <Typography variant="h6" color="textPrimary">
+                  {ranobe.title}
+                </Typography>
+              </Link>
             </ListItem>
 
             <Divider variant="fullWidth" component="li" />
-          </div>
+          </Box>
         )
       })}
     </List>
   )
 }
-
-export default ListComponent
