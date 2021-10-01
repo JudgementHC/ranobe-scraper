@@ -24,8 +24,13 @@ export default function Header({ style }: Props): JSX.Element {
 }
 
 function BackLink(): JSX.Element {
+  const location = useLocation()
+  const paths = location.pathname.split('/')
+  paths.pop()
+  const previousRoute = paths.join('/')
+
   return (
-    <Link to="/">
+    <Link to={previousRoute}>
       <MaterialLink component="button">
         <Box display="flex" alignItems="center">
           <ArrowBack color="action"></ArrowBack>

@@ -1,12 +1,138 @@
-import { Container } from '@material-ui/core'
-import { useParams } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  FormGroup
+} from '@material-ui/core'
+import axios from 'axios'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
+import ChapterListComponent from '../../components/chapterlist/ChapterList.component'
+import apiAxios from '../../tools/axios'
+import {
+  IRanobelibmeIdDownload,
+  IRanobelibmeIdQuery
+} from '../../tools/interfaces/Ranobelibme.interface'
+import { Chapter } from '../../tools/responses/api.interface'
+
+interface Params {
+  id: string
+}
+
+let ranobeTitle: string
 
 export default function RanobeLibMeId(): JSX.Element {
-  const params = useParams<{ id: string }>()
+  const [checkAll, setCheckAll] = useState(false)
+  const [chapterList, setChapterList] = useState<Chapter[]>([])
+  const params = useParams<Params>()
+  const location = useLocation()
+
+  const onCheck = (event: ChangeEvent, checked: boolean) => {
+    const index = event.target.getAttribute('name')
+    const changedChapterList = chapterList.map((ranobe, i) => {
+      if (index && i === +index) {
+        ranobe.checked = checked
+      }
+      return ranobe
+    })
+    setChapterList(changedChapterList)
+  }
+
+  const checkAllChange = (event: ChangeEvent, checked: boolean) => {
+    const changedChapterList = chapterList.map(ranobe => {
+      ranobe.checked = checked
+      return ranobe
+    })
+    setChapterList(changedChapterList)
+    setCheckAll(checked)
+  }
+
+  const download = async () => {
+    await downloadRanobe(chapterList, ranobeTitle)
+  }
+
+  useEffect(() => {
+    const request = axios.CancelToken.source()
+
+    const paramsT: IRanobelibmeIdQuery = {
+      href: params.id
+    }
+    ranobeTitle =
+      new URLSearchParams(location.search).get('title') || 'empty title'
+    if (ranobeTitle) paramsT.title = ranobeTitle
+
+    const fetchChapters = async () => {
+      try {
+        const response = (await apiAxios.get('/availableChapters', {
+          cancelToken: request.token,
+          params: paramsT
+        })) as Chapter[]
+        if (response) {
+          response.forEach(ranobe => (ranobe.checked = false))
+          setChapterList(response)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchChapters()
+
+    return () => request.cancel()
+  }, [])
 
   return (
     <Container>
-      <h4>{params.id}</h4>
+      <Box display="flex">
+        <FormGroup>
+          <FormControlLabel
+            label="Check all"
+            control={
+              <Checkbox
+                color="primary"
+                checked={checkAll}
+                onChange={checkAllChange}
+              />
+            }
+          ></FormControlLabel>
+        </FormGroup>
+
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={download}
+        >
+          Download selected
+        </Button>
+      </Box>
+
+      <ChapterListComponent
+        chapterList={chapterList}
+        onCheck={onCheck}
+      ></ChapterListComponent>
     </Container>
   )
+}
+
+async function downloadRanobe(chapterList: Chapter[], title: string) {
+  const ranobeHrefList = chapterList
+    .filter(chapter => chapter.checked)
+    .map(chapter => chapter.href)
+
+  const downloadParams: IRanobelibmeIdDownload = {
+    ranobeHrefList,
+    title
+  }
+
+  if (ranobeHrefList.length) {
+    try {
+      const response = await apiAxios.post('/download', downloadParams)
+      console.info(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
 }

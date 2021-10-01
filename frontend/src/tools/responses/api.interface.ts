@@ -12,7 +12,6 @@ export interface IRanobe {
   title: string
   href: string
   cover: string
-  checked: boolean
   chapters?: Chapter[]
 }
 
@@ -20,5 +19,6 @@ export interface Chapter {
   title: string
   href: string
   author: string
+  checked: boolean
   date: string
 }
