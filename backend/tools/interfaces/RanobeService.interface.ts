@@ -13,7 +13,6 @@ export interface IRanobeController {
   getLocalRanobeList(): RequestHandler
   search(): RequestHandler
   getAvailableChapters(): RequestHandler
-  getLocalChapters(): RequestHandler
   download(): RequestHandler
 }
 

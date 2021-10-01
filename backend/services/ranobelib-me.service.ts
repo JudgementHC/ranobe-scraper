@@ -145,7 +145,8 @@ export default class RanobeLibMeService implements DefaultService {
       height: 1080
     })
     await page.goto(url, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'networkidle2',
+      timeout: 0
     })
     await page.content()
 

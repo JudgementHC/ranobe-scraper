@@ -10,7 +10,7 @@ import RanobeLibMeService, {
 import TempDBService from '../services/temp-db.service'
 import UtilsService from '../services/utils.service'
 import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
-import { Chapter, IUser } from '../tools/interfaces/User.interface'
+import { IUser } from '../tools/interfaces/User.interface'
 import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
 
 @autoInjectable()
@@ -113,27 +113,20 @@ export default class RanobeLibMeController implements IRanobeController {
 
   getAvailableChapters(): RequestHandler {
     return async (req, res) => {
-      type TChaptersQuery = { title: string; href: string }
-      const { title, href } = req.query as TChaptersQuery
-      let data: Chapter[] = []
-
+      type TChaptersQuery = { title: string; href: string; reload: boolean }
+      const { title, href, reload } = req.query as unknown as TChaptersQuery
       if (href) {
-        data = await this.ranobeLibMeService.getAvailableChapters(href)
+        if (!reload) {
+          const ranobe = await this.dbModel.getChapters(title)
+
+          if (ranobe) {
+            return res.json(ranobe)
+          }
+        }
+
+        const data = await this.ranobeLibMeService.getAvailableChapters(href)
         title && (await this.dbModel.setChapters(title, data))
         return res.json(data)
-      }
-
-      res.sendStatus(404)
-    }
-  }
-
-  getLocalChapters(): RequestHandler {
-    return async (req, res) => {
-      const title = req.query.title as string
-
-      const ranobe = await this.dbModel.getChapters(title)
-      if (ranobe) {
-        return res.json(ranobe)
       }
 
       res.sendStatus(404)
