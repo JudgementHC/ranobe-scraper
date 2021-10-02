@@ -1,11 +1,11 @@
+import { ArrowBack } from '@material-ui/icons'
 import {
   AppBar,
   Box,
   Link as MaterialLink,
   Toolbar,
   Typography
-} from '@material-ui/core'
-import { ArrowBack } from '@material-ui/icons'
+} from '@mui/material'
 import { CSSProperties } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -17,7 +17,7 @@ export default function Header({ style }: Props): JSX.Element {
   const location = useLocation()
 
   return (
-    <AppBar style={style} position="relative">
+    <AppBar style={style} position="relative" enableColorOnDark={true}>
       <Toolbar>{location.pathname !== '/' && <BackLink />}</Toolbar>
     </AppBar>
   )

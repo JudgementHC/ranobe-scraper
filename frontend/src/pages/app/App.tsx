@@ -1,4 +1,4 @@
-import { Box, Button, Container, Typography } from '@material-ui/core'
+import { Box, Button, Container, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 
 const ranobeServiceList = [
@@ -12,7 +12,7 @@ function App(): JSX.Element {
   return (
     <Container>
       <Typography variant="h4" style={{ marginBottom: '30px' }}>
-        Services:{' '}
+        Services:
       </Typography>
 
       <Box sx={{ display: 'flex' }}>

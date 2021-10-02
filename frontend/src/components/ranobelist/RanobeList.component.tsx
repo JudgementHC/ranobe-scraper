@@ -1,9 +1,4 @@
-import {
-  Box, Divider,
-  List,
-  ListItem,
-  Typography
-} from '@material-ui/core'
+import { Box, Divider, List, ListItem, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { ERanobeUrls } from '../../tools/enums/Services.enum'
 import { IRanobe } from '../../tools/responses/api.interface'
@@ -37,6 +32,7 @@ export default function RanobeListComponent(props: IListProps): JSX.Element {
                 </div>
 
                 <Typography variant="h6" color="textPrimary">
+                  {}
                   {ranobe.title}
                 </Typography>
               </Link>

@@ -1,4 +1,12 @@
-import { Box, Checkbox, Grid, List, ListItem } from '@material-ui/core'
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  List,
+  ListItem
+} from '@mui/material'
 import { ChangeEvent } from 'react'
 import { Chapter } from '../../tools/responses/api.interface'
 
@@ -16,24 +24,29 @@ export default function ChapterListComponent(props: IListProps): JSX.Element {
             sx={{ display: 'flex', alignItems: 'center', mb: '15px' }}
             key={index}
           >
-            <Checkbox
-              name={index.toString()}
-              color="primary"
-              checked={chapter.checked}
-              onChange={props.onCheck}
-            />
-
             <ListItem divider={true}>
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
-                  {chapter.title}
+              <Grid alignItems="center" container spacing={2}>
+                <Grid item xs={12} md={8}>
+                  <FormGroup>
+                    <FormControlLabel
+                      label={chapter.title}
+                      control={
+                        <Checkbox
+                          name={index.toString()}
+                          color="primary"
+                          checked={chapter.checked}
+                          onChange={props.onCheck}
+                        />
+                      }
+                    ></FormControlLabel>
+                  </FormGroup>
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={8} md={3}>
                   {chapter.author}
                 </Grid>
 
-                <Grid item xs={1}>
+                <Grid item xs={4} md={1}>
                   {chapter.date}
                 </Grid>
               </Grid>

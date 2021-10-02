@@ -1,12 +1,14 @@
-import { Container } from '@material-ui/core'
+import { Container } from '@mui/material'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { MessageContext } from '../../components/message/Message.component'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
 import apiAxios from '../../tools/axios'
 import { IRanobe } from '../../tools/responses/api.interface'
 
 function RanobeLibMe(): JSX.Element {
   const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
+  const [, setSnackbar] = useContext(MessageContext)
 
   useEffect(() => {
     const request = axios.CancelToken.source()
@@ -21,6 +23,11 @@ function RanobeLibMe(): JSX.Element {
         }
       } catch (error) {
         console.error(error)
+        setSnackbar({
+          show: true,
+          type: 'error',
+          message: 'Cannot fetch ranobe list'
+        })
       }
     }
 

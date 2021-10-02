@@ -225,7 +225,6 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  // todo: добавить в возвращаемом значении title, чтобы избавиться от sheet
   async getChapterText(chapterHref: string): Promise<IReaderContainer> {
     const url = `${this.baseUrl}/${chapterHref}`
     const [page, browser] = await this.utils.getPuppeeterStealth()
