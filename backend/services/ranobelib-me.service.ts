@@ -278,7 +278,7 @@ export default class RanobeLibMeService implements DefaultService {
 
   getChaptersRange(ranobeHrefList: string[]): { start: string; end: string } {
     let [, start] = this.parseLink(ranobeHrefList[0])
-    let [, end] = this.parseLink(ranobeHrefList[1])
+    let [, end] = this.parseLink(ranobeHrefList[ranobeHrefList.length - 1])
 
     if (start > end) {
       const temp = start

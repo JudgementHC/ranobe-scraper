@@ -2,6 +2,7 @@ import path from 'path'
 import { v4 } from 'uuid'
 import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
 import UtilsService from './utils.service'
+import fs from 'fs'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodepub = require('nodepub')
@@ -31,26 +32,38 @@ export default class EpubGenService {
 
   constructor(
     private metadata: IEpubMetaData,
-    private readerContainer: IReaderContainer[]
+    private readerContainer: IReaderContainer[],
+    private start: string,
+    private end: string
   ) {
     this.utils = new UtilsService()
   }
 
   async generate(): Promise<unknown> {
+    const title = this.utils.namePattern({
+      title: this.metadata.title,
+      start: this.start,
+      end: this.end
+    })
+
+    if (fs.existsSync(title)) {
+      return Promise.reject('File already exist')
+    }
+
     fillRandomData(this.metadata)
 
     const epub = nodepub.document(this.metadata)
 
-    for (const sheet of this.readerContainer) {
+    for (const sheet of this.readerContainer.reverse()) {
       const { textContent, title } = sheet
       epub.addSection(title, textContent)
     }
 
-    const directory = path.join(__dirname, '../ranobe')
+    const directory = this.utils.ranobeFolderPath()
 
     await this.utils.checkFolder(directory)
 
-    return epub.writeEPUB(directory, `Ranobe ${this.metadata.title}`)
+    return epub.writeEPUB(directory, title)
   }
 }
 

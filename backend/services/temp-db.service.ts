@@ -18,8 +18,8 @@ export default class TempDBService {
     data: IReaderContainer[]
   ): Promise<void> => {
     const { title, start, end } = name
-    const dir = this.utils.getTempFolderPath()
-    const fileName = this.utils.getTempRanobePattern(title, start, end)
+    const dir = this.utils.tempFolderPath()
+    const fileName = this.utils.tempRanobePattern(title, start, end)
 
     return new Promise((res, rej) => {
       this.utils

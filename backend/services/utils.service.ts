@@ -4,6 +4,14 @@ import puppeteer, { Browser, Page } from 'puppeteer'
 import PuppeteerExtra from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 
+interface IRanobePatternParams {
+  dir?: string
+  title?: string
+  start?: string
+  end?: string
+  ext?: string
+}
+
 export default class UtilsService {
   getPuppeeterStealth = async (): Promise<[Page, Browser]> => {
     const puppeteer = PuppeteerExtra.use(StealthPlugin())
@@ -31,12 +39,24 @@ export default class UtilsService {
     }
   }
 
-  getTempFolderPath(): string {
+  tempFolderPath(): string {
     return path.join(__dirname, '../ranobe-temp')
   }
 
-  getTempRanobePattern(title?: string, start?: string, end?: string): string {
-    const dir = this.getTempFolderPath()
-    return `${dir}/${title} (start ${start}, end ${end}).json`
+  ranobeFolderPath(): string {
+    return path.join(__dirname, '../ranobe')
+  }
+
+  tempRanobePattern(title?: string, start?: string, end?: string): string {
+    const dir = this.tempFolderPath()
+    const ext = 'json'
+    return this.namePattern({ title, start, end, dir, ext })
+  }
+
+  namePattern(params: IRanobePatternParams): string {
+    const { dir, title, start, end, ext } = params
+    return `${dir ? dir + '/' : ''}${title} (start ${start}, end ${end})${
+      ext ? '.' + ext : ''
+    }`
   }
 }

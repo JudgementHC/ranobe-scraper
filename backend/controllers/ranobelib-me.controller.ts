@@ -28,39 +28,41 @@ export default class RanobeLibMeController implements IRanobeController {
 
   login(): RequestHandler {
     return async (req, res) => {
-      const loginForm = req.body as ILoginForm
+      try {
+        const loginForm = req.body as ILoginForm
 
-      if (loginForm.email && loginForm.password) {
-        const [cookies, identifier, ranobeList] =
-          await this.ranobeLibMeService.login(loginForm)
+        if (loginForm.email && loginForm.password) {
+          const [cookies, identifier, ranobeList] =
+            await this.ranobeLibMeService.login(loginForm)
 
-        cookies.forEach((cookie, index) => {
-          res.setHeader(`ranobelib-auth_${index}`, JSON.stringify(cookie))
+          cookies.forEach((cookie, index) => {
+            res.setHeader(`ranobelib-auth_${index}`, JSON.stringify(cookie))
 
-          const { expires, path, name, value, secure } = cookie
-          res.cookie(name, value, {
-            domain: process.env.BASE_URL,
-            expires: new Date(Date.now() + expires),
-            path: path,
-            secure,
-            httpOnly: false
+            const { expires, path, name, value, secure } = cookie
+            res.cookie(name, value, {
+              domain: process.env.BASE_URL,
+              expires: new Date(Date.now() + expires),
+              path: path,
+              secure,
+              httpOnly: false
+            })
           })
-        })
 
-        const user: IUser = {
-          email: loginForm.email,
-          identifier,
-          cookies,
-          ranobeList,
-          domain: cookies[0].domain
+          const user: IUser = {
+            email: loginForm.email,
+            identifier,
+            cookies,
+            ranobeList,
+            domain: cookies[0].domain
+          }
+
+          await this.dbModel.setLocalUser(user)
+
+          return res.json(user)
         }
-
-        await this.dbModel.setLocalUser(user)
-
-        return res.json(user)
+      } catch (error) {
+        res.sendStatus(404)
       }
-
-      res.sendStatus(404)
     }
   }
 
@@ -146,14 +148,14 @@ export default class RanobeLibMeController implements IRanobeController {
       const { start, end } =
         this.ranobeLibMeService.getChaptersRange(ranobeHrefList)
 
-      const fileName = this.utils.getTempRanobePattern(title, start, end)
-      let file
-
-      if (!reload && fs.existsSync(fileName)) {
-        file = JSON.parse(fs.readFileSync(fileName).toString())
-      }
+      const fileName = this.utils.tempRanobePattern(title, start, end)
 
       try {
+        let file
+        if (!reload && fs.existsSync(fileName)) {
+          file = JSON.parse(fs.readFileSync(fileName).toString())
+        }
+
         let readerContainer: IReaderContainer[]
 
         if (!file) {
@@ -175,7 +177,12 @@ export default class RanobeLibMeController implements IRanobeController {
           readerContainer
         )
 
-        const epubGenService = new EpubGenService(metadata, readerContainer)
+        const epubGenService = new EpubGenService(
+          metadata,
+          readerContainer,
+          start,
+          end
+        )
         await epubGenService.generate()
 
         return res.sendStatus(200)
