@@ -2,6 +2,7 @@ import '@fontsource/roboto'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import MessageComponent from './components/message/Message.component'
 import './index.scss'
 import reportWebVitals from './reportWebVitals'
 import routes from './routes'
@@ -9,6 +10,8 @@ import { StoreProvider } from './tools/store'
 
 ReactDOM.render(
   <StoreProvider>
+    <MessageComponent />
+
     <BrowserRouter>
       <Switch>
         {routes.map((route, i) => (

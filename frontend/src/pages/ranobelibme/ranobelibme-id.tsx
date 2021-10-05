@@ -10,16 +10,14 @@ import axios, { CancelTokenSource } from 'axios'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import ChapterListComponent from '../../components/chapterlist/ChapterList.component'
-import {
-  IMessageFunction,
-  MessageContext
-} from '../../components/message/Message.component'
 import apiAxios from '../../tools/axios'
 import {
   IRanobelibmeIdDownload,
   IRanobelibmeIdQuery
 } from '../../tools/interfaces/Ranobelibme.interface'
+import { ISnackbar } from '../../tools/interfaces/Snackbar.interface'
 import { Chapter } from '../../tools/responses/api.interface'
+import { StoreContext } from '../../tools/store'
 
 interface Params {
   id: string
@@ -32,7 +30,8 @@ export default function RanobeLibMeId(): JSX.Element {
   const [chapterList, setChapterList] = useState<Chapter[]>([])
   const params = useParams<Params>()
   const location = useLocation()
-  const [, setSnackbar] = useContext(MessageContext)
+  const store = useContext(StoreContext)
+  const [, setSnackbar] = store.snackbar
   const request = axios.CancelToken.source()
 
   const onCheck = (event: ChangeEvent, checked: boolean) => {
@@ -129,7 +128,7 @@ export default function RanobeLibMeId(): JSX.Element {
 async function downloadRanobe(
   chapterList: Chapter[],
   title: string,
-  setSnackbar: IMessageFunction,
+  setSnackbar: (params: ISnackbar) => void,
   request: CancelTokenSource
 ) {
   const ranobeHrefList = chapterList

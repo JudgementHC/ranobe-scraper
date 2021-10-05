@@ -9,7 +9,6 @@ import { blue } from '@mui/material/colors'
 import { CSSProperties, useMemo } from 'react'
 import Footer from '../components/footer/Footer.component'
 import Header from '../components/header/Header.component'
-import { MessageProvider } from '../components/message/Message.component'
 
 const headerFooterStyles: CSSProperties = { flex: '0 1 auto' }
 
@@ -32,19 +31,17 @@ const DefaultLayout: React.FC<unknown> = props => {
     <ThemeProvider theme={theme}>
       <CssBaseline></CssBaseline>
 
-      <MessageProvider>
-        <Box
-          sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}
-        >
-          <Header style={headerFooterStyles}></Header>
+      <Box
+        sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}
+      >
+        <Header style={headerFooterStyles}></Header>
 
-          <Box sx={{ marginY: '30px', flex: '1 0 auto' }}>
-            <main>{props.children}</main>
-          </Box>
-
-          <Footer style={headerFooterStyles}></Footer>
+        <Box sx={{ marginY: '30px', flex: '1 0 auto' }}>
+          <main>{props.children}</main>
         </Box>
-      </MessageProvider>
+
+        <Footer style={headerFooterStyles}></Footer>
+      </Box>
     </ThemeProvider>
   )
 }

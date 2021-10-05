@@ -2,17 +2,18 @@ import { Container } from '@mui/material'
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
 import LoginComponent from '../../components/login/Login.component'
-import { MessageContext } from '../../components/message/Message.component'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
 import apiAxios from '../../tools/axios'
 import { ILoginForm } from '../../tools/interfaces/Ranobelibme.interface'
 import { IRanobe, IUser } from '../../tools/responses/api.interface'
+import { StoreContext } from '../../tools/store'
 
 function RanobeLibMe(): JSX.Element {
   const request = axios.CancelToken.source()
 
   const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
-  const [, setSnackbar] = useContext(MessageContext)
+  const store = useContext(StoreContext)
+  const [, setSnackbar] = store.snackbar
 
   const loginOnSubmit = async (data: ILoginForm) => {
     try {
