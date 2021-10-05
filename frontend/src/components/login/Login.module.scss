@@ -1,0 +1,18 @@
+.box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 300px;
+  width: 100%;
+  padding: 70px 30px 30px;
+  background-color: #000;
+  border: 2px solid #000;
+  box-shadow: 24px;
+  transform: translate(-50%, -50%);
+}
+
+.modalCloseButton {
+  position: absolute !important;
+  top: 10px;
+  right: 10px;
+}

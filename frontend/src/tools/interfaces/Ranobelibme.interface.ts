@@ -9,3 +9,8 @@ export interface IRanobelibmeIdDownload {
   ranobeHrefList: string[]
   reload?: boolean
 }
+
+export interface ILoginForm {
+  email: string
+  password: string
+}

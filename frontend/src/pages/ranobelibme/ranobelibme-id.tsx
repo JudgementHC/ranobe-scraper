@@ -6,7 +6,7 @@ import {
   FormControlLabel,
   FormGroup
 } from '@mui/material'
-import axios from 'axios'
+import axios, { CancelTokenSource } from 'axios'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import ChapterListComponent from '../../components/chapterlist/ChapterList.component'
@@ -33,6 +33,7 @@ export default function RanobeLibMeId(): JSX.Element {
   const params = useParams<Params>()
   const location = useLocation()
   const [, setSnackbar] = useContext(MessageContext)
+  const request = axios.CancelToken.source()
 
   const onCheck = (event: ChangeEvent, checked: boolean) => {
     const index = event.target.getAttribute('name')
@@ -55,12 +56,10 @@ export default function RanobeLibMeId(): JSX.Element {
   }
 
   const download = async () => {
-    await downloadRanobe(chapterList, ranobeTitle, setSnackbar)
+    await downloadRanobe(chapterList, ranobeTitle, setSnackbar, request)
   }
 
   useEffect(() => {
-    const request = axios.CancelToken.source()
-
     const paramsT: IRanobelibmeIdQuery = {
       href: params.id
     }
@@ -130,7 +129,8 @@ export default function RanobeLibMeId(): JSX.Element {
 async function downloadRanobe(
   chapterList: Chapter[],
   title: string,
-  setSnackbar: IMessageFunction
+  setSnackbar: IMessageFunction,
+  request: CancelTokenSource
 ) {
   const ranobeHrefList = chapterList
     .filter(chapter => chapter.checked)
@@ -143,7 +143,9 @@ async function downloadRanobe(
 
   if (ranobeHrefList.length) {
     try {
-      const response = await apiAxios.post('/download', downloadParams)
+      const response = await apiAxios.post('/download', downloadParams, {
+        cancelToken: request.token
+      })
 
       setSnackbar({
         message: `Ranobe downloaded, server response: ${response}`,

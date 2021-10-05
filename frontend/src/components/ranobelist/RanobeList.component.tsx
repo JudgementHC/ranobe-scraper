@@ -19,12 +19,12 @@ export default function RanobeListComponent(props: IListProps): JSX.Element {
           >
             <ListItem>
               <Link
-                style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                className={style.link}
                 to={`/ranobelibme/${ranobe.href}?title=${ranobe.title}`}
               >
-                <div className={style.fit__wrap}>
+                <div className={style.wrap}>
                   <img
-                    className={style.fit__image}
+                    className={style.image}
                     src={`${ERanobeUrls.STATICLIB}/${ranobe.cover}`}
                     alt={ranobe.title}
                     loading="lazy"

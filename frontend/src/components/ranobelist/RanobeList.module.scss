@@ -1,18 +1,30 @@
-.fit {
-  &__wrap {
-    position: relative;
-    max-width: 15%;
-    width: 100%;
-    margin-right: 15px;
-    padding-bottom: 20%;
-  }
+.link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
 
-  &__image {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    object-fit: cover;
-    width: 100%;
+  &:hover,
+  &:focus {
+    padding: 5px;
+    box-shadow: rgba(0, 98, 204, 0.4) 0 0 0 3px;
+    outline: none;
   }
+}
+
+.wrap {
+  position: relative;
+  max-width: 15%;
+  width: 100%;
+  margin-right: 15px;
+  padding-bottom: 20%;
+}
+
+.image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
