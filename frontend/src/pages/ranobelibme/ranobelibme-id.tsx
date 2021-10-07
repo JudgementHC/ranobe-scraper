@@ -32,6 +32,7 @@ export default function RanobeLibMeId(): JSX.Element {
   const location = useLocation()
   const store = useContext(StoreContext)
   const [, setSnackbar] = store.snackbar
+  const [loading, setLoading] = store.loading
   const request = axios.CancelToken.source()
 
   const onCheck = (event: ChangeEvent, checked: boolean) => {
@@ -55,7 +56,13 @@ export default function RanobeLibMeId(): JSX.Element {
   }
 
   const download = async () => {
-    await downloadRanobe(chapterList, ranobeTitle, setSnackbar, request)
+    await downloadRanobe(
+      chapterList,
+      ranobeTitle,
+      setSnackbar,
+      request,
+      setLoading
+    )
   }
 
   useEffect(() => {
@@ -68,9 +75,11 @@ export default function RanobeLibMeId(): JSX.Element {
 
     const fetchChapters = async () => {
       try {
+        setLoading(true)
         const response = (await apiAxios.get('/availableChapters', {
           cancelToken: request.token,
-          params: paramsT
+          params: paramsT,
+          timeout: 0
         })) as Chapter[]
         if (response) {
           response.forEach(ranobe => (ranobe.checked = false))
@@ -83,6 +92,8 @@ export default function RanobeLibMeId(): JSX.Element {
           show: true,
           type: 'error'
         })
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -108,6 +119,7 @@ export default function RanobeLibMeId(): JSX.Element {
         </FormGroup>
 
         <Button
+          disabled={loading}
           variant="contained"
           color="primary"
           size="small"
@@ -129,7 +141,8 @@ async function downloadRanobe(
   chapterList: Chapter[],
   title: string,
   setSnackbar: (params: ISnackbar) => void,
-  request: CancelTokenSource
+  request: CancelTokenSource,
+  setLoading: (params: boolean) => void
 ) {
   const ranobeHrefList = chapterList
     .filter(chapter => chapter.checked)
@@ -142,8 +155,10 @@ async function downloadRanobe(
 
   if (ranobeHrefList.length) {
     try {
+      setLoading(true)
       const response = await apiAxios.post('/download', downloadParams, {
-        cancelToken: request.token
+        cancelToken: request.token,
+        timeout: 0
       })
 
       setSnackbar({
@@ -159,6 +174,8 @@ async function downloadRanobe(
         show: true,
         type: 'error'
       })
+    } finally {
+      setLoading(false)
     }
   }
 }

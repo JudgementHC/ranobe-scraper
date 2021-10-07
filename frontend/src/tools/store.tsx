@@ -12,9 +12,11 @@ export const StoreProvider: FC = ({ children }) => {
   const [snackbar, setSnackbar] = useState<ISnackbar>({
     show: false
   })
+  const [loading, setLoading] = useState(false)
 
   const store = {
-    snackbar: [snackbar, setSnackbar]
+    snackbar: [snackbar, setSnackbar],
+    loading: [loading, setLoading]
   }
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>

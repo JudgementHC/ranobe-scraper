@@ -2,13 +2,15 @@ import {
   Box,
   createTheme,
   CssBaseline,
+  LinearProgress,
   ThemeProvider,
   useMediaQuery
 } from '@mui/material'
 import { blue } from '@mui/material/colors'
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, useContext, useMemo } from 'react'
 import Footer from '../components/footer/Footer.component'
 import Header from '../components/header/Header.component'
+import { StoreContext } from '../tools/store'
 
 const headerFooterStyles: CSSProperties = { flex: '0 1 auto' }
 
@@ -26,10 +28,13 @@ const DefaultLayout: React.FC<unknown> = props => {
       }),
     [prefersDarkMode]
   )
+  const store = useContext(StoreContext)
+  const [loading] = store.loading
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline></CssBaseline>
+      {loading && <LinearProgress />}
 
       <Box
         sx={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}
