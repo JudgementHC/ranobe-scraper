@@ -159,7 +159,7 @@ export default class RanobeLibMeController implements IRanobeController {
         let readerContainer: IReaderContainer[]
 
         if (!file) {
-          readerContainer = await this.ranobeLibMeService.download(
+          readerContainer = await this.ranobeLibMeService.getChapterText(
             ranobeHrefList
           )
         } else {

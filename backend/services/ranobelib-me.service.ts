@@ -225,42 +225,40 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  async getChapterText(chapterHref: string): Promise<IReaderContainer> {
-    const url = `${this.baseUrl}/${chapterHref}`
+  async getChapterText(ranobeHrefList: string[]): Promise<IReaderContainer[]> {
+    const readerContainer: IReaderContainer[] = []
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
-    await page.goto(url, {
-      waitUntil: 'networkidle2',
-      timeout: 0
-    })
-    await page.content()
+    for (const ranobeHref of ranobeHrefList) {
+      try {
+        const url = `${this.baseUrl}/${ranobeHref}`
 
-    const textContent = await page.evaluate(() => {
-      const reader = document.querySelector(
-        '.reader-container.container.container_center'
-      )
-      return reader?.innerHTML || ''
-    })
+        await page.goto(url, {
+          waitUntil: 'networkidle2'
+        })
+        await page.content()
+
+        const textContent = await page.evaluate(() => {
+          const reader = document.querySelector(
+            '.reader-container.container.container_center'
+          )
+          return reader?.innerHTML || ''
+        })
+
+        const [volume, chapter] = this.parseLink(ranobeHref)
+
+        readerContainer.push({
+          title: `Volume: ${volume}. Chapter: ${chapter}`,
+          volume,
+          chapter,
+          textContent
+        })
+      } catch (error) {
+        this.logger.error(error)
+      }
+    }
 
     await browser.close()
-
-    const [volume, chapter] = this.parseLink(chapterHref)
-
-    return {
-      title: `Volume: ${volume}. Chapter: ${chapter}`,
-      volume,
-      chapter,
-      textContent
-    }
-  }
-
-  async download(ranobeHrefList: string[]): Promise<IReaderContainer[]> {
-    const readerContainer: IReaderContainer[] = []
-
-    for (const href of ranobeHrefList) {
-      const data = await this.getChapterText(href)
-      readerContainer.push(data)
-    }
 
     return readerContainer
   }

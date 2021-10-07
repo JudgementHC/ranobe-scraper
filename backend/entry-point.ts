@@ -40,7 +40,6 @@ const server = app.listen(PORT, () => {
 
 process.on('exit', () => {
   logger.info('Server shuts down')
-  process.disconnect()
   server.close()
 })
 /*==================== SERVER END ====================*/
