@@ -15,8 +15,6 @@ class RanobeLibMeRouter implements IRanobeRouter {
   router: Router = Router()
 
   constructor(private ranobelibmeController: RanobeLibMeController) {
-    this.router.post('/login', this.ranobelibmeController.login())
-
     this.router.get(
       '/userRanobeList',
       isAuthorized,
