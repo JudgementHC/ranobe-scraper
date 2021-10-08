@@ -5,23 +5,24 @@ import StormDB from 'stormdb'
 import { Logger } from 'tslog'
 import { Chapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
 import { TRanobeServices } from '../tools/types/Services.type'
+import UtilsService from './utils.service'
 
 export default class DBmodelService {
-  private stormDB: StormDB
+  private stormDB!: StormDB
   private logger = new Logger()
+  private utils = new UtilsService()
 
   constructor(private serviceName: TRanobeServices) {
+    this.init()
+  }
+
+  async init(): Promise<void> {
     const pathName = path.join(__dirname, '../database')
     const fileName = 'ranobe.stormdb'
     const fullPath = `${pathName}/${fileName}`
 
-    try {
-      fs.mkdirSync(pathName)
-    } catch (error) {
-      if (!fs.existsSync(fullPath)) {
-        fs.writeFileSync(fullPath, '')
-      }
-    }
+    await this.utils.checkFolder(pathName)
+    await this.utils.checkFile(fullPath, '')
 
     const engine = new StormDB.localFileEngine(fullPath)
     this.stormDB = new StormDB(engine)

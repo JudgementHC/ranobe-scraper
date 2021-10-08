@@ -18,7 +18,12 @@ const cleanEvery = 5 // days
 /* ==================== MIDDLEWARE USING START ==================== */
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+app.use(
+  cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+  })
+)
 app.use(helmet())
 app.use(morgan('combined'))
 /* ==================== MIDDLEWARE USING END ==================== */

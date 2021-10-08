@@ -37,21 +37,11 @@ export default class RanobeLibMeController implements IRanobeController {
 
           cookies.forEach((cookie, index) => {
             res.setHeader(`ranobelib-auth_${index}`, JSON.stringify(cookie))
-
-            const { expires, path, name, value, secure } = cookie
-            res.cookie(name, value, {
-              domain: process.env.BASE_URL,
-              expires: new Date(Date.now() + expires),
-              path: path,
-              secure,
-              httpOnly: false
-            })
           })
 
           const user: IUser = {
             email: loginForm.email,
             identifier,
-            cookies,
             ranobeList,
             domain: cookies[0].domain
           }

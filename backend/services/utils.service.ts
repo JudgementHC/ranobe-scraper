@@ -27,16 +27,21 @@ export default class UtilsService {
   }
 
   checkFolder = async (folderName: string): Promise<void> => {
-    if (!fs.existsSync(folderName)) {
-      return new Promise((res, rej) => {
-        fs.mkdir(folderName, err => {
-          if (err?.code !== 'EEXIST') {
-            return rej(err)
-          }
-          res()
-        })
-      })
-    }
+    return new Promise(res => {
+      if (!fs.existsSync(folderName)) {
+        return fs.mkdir(folderName, () => res())
+      }
+      res()
+    })
+  }
+
+  checkFile = async (fullPath: string, content: string): Promise<void> => {
+    return new Promise(res => {
+      if (!fs.existsSync(fullPath)) {
+        fs.writeFileSync(fullPath, content)
+      }
+      res()
+    })
   }
 
   tempFolderPath(): string {
