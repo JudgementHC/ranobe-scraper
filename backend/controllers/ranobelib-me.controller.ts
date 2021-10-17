@@ -5,7 +5,8 @@ import { autoInjectable } from 'tsyringe'
 import DBmodelService from '../services/DBmodel.service'
 import EpubGenService, { IEpubMetaData } from '../services/epub-gen.service'
 import RanobeLibMeService, {
-  ILoginForm
+  ILoginForm,
+  TSearchType
 } from '../services/ranobelib-me.service'
 import TempDBService from '../services/temp-db.service'
 import UtilsService from '../services/utils.service'
@@ -91,10 +92,14 @@ export default class RanobeLibMeController implements IRanobeController {
 
   search(): RequestHandler {
     return async (req, res) => {
-      const { title } = req.query
+      type TSearchQuery = {
+        title: string
+        type: TSearchType
+      }
+      const { title, type } = req.query as TSearchQuery
 
-      if (title) {
-        const data = await this.ranobeLibMeService.search(title as string)
+      if (title && type) {
+        const data = await this.ranobeLibMeService.search(title, type)
 
         return res.json(data)
       }
@@ -103,7 +108,7 @@ export default class RanobeLibMeController implements IRanobeController {
     }
   }
 
-  getAvailableChapters(): RequestHandler {
+  chapters(): RequestHandler {
     return async (req, res) => {
       type TChaptersQuery = { title: string; href: string; reload: boolean }
       const { title, href, reload } = req.query as unknown as TChaptersQuery

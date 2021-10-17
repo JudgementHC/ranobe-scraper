@@ -2,7 +2,6 @@ import { Router } from 'express'
 import 'reflect-metadata'
 import { autoInjectable, container } from 'tsyringe'
 import RanobeLibMeController from '../controllers/ranobelib-me.controller'
-import { isAuthorized } from '../middlewares/ranobelib-me.middleware'
 import { IRanobeRouter } from '../tools/interfaces/RanobeService.interface'
 
 /*
@@ -15,23 +14,9 @@ class RanobeLibMeRouter implements IRanobeRouter {
   router: Router = Router()
 
   constructor(private ranobelibmeController: RanobeLibMeController) {
-    this.router.get(
-      '/userRanobeList',
-      isAuthorized,
-      this.ranobelibmeController.getUserRanobeList()
-    )
-
-    this.router.get(
-      '/localRanobeList',
-      this.ranobelibmeController.getLocalRanobeList()
-    )
-
     this.router.get('/search', this.ranobelibmeController.search())
 
-    this.router.get(
-      '/availableChapters',
-      this.ranobelibmeController.getAvailableChapters()
-    )
+    this.router.get('/chapters', this.ranobelibmeController.chapters())
 
     this.router.post('/download', this.ranobelibmeController.download())
   }

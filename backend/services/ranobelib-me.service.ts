@@ -15,6 +15,8 @@ export interface ILoginForm {
   password: string
 }
 
+export type TSearchType = 'manga' | 'user'
+
 @autoInjectable()
 export default class RanobeLibMeService implements DefaultService {
   baseUrl = ERanobeUrls.RANOBELIBME
@@ -113,8 +115,8 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  async search(title: string): Promise<ISearchResponse> {
-    const searchUrl = `${this.baseUrl}/search?type=manga&q=${title}`
+  async search(title: string, type: TSearchType): Promise<ISearchResponse> {
+    const searchUrl = `${this.baseUrl}/search?type=${type}&q=${title}`
 
     const [page, browser] = await this.utils.getPuppeeterStealth()
 

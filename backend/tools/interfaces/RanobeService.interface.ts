@@ -8,11 +8,8 @@ export interface IRanobeRouter {
 export interface IRanobeController {
   dbModel: DBmodelService
 
-  login(): RequestHandler
-  getUserRanobeList(): RequestHandler
-  getLocalRanobeList(): RequestHandler
   search(): RequestHandler
-  getAvailableChapters(): RequestHandler
+  chapters(): RequestHandler
   download(): RequestHandler
 }
 
