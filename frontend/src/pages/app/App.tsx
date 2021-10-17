@@ -8,7 +8,7 @@ const ranobeServiceList = [
   }
 ]
 
-function App(): JSX.Element {
+export default function App(): JSX.Element {
   return (
     <Container>
       <Typography variant="h4" style={{ marginBottom: '30px' }}>
@@ -27,5 +27,3 @@ function App(): JSX.Element {
     </Container>
   )
 }
-
-export default App
