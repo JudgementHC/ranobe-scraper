@@ -13,7 +13,7 @@ export default function RanobeLibMe(): JSX.Element {
   const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
   const store = useContext(StoreContext)
   const [, setSnackbar] = store.snackbar
-  const [, setLoading] = store.loading
+  const [loading, setLoading] = store.loading
 
   useEffect(() => {
     const getLocalRanobe = async (): Promise<void> => {
@@ -46,10 +46,14 @@ export default function RanobeLibMe(): JSX.Element {
 
   return (
     <Container>
+      <Typography sx={{ mb: '15px' }} variant="h4">
+        Local list:
+      </Typography>
+
       {ranobeList.length ? (
         <RanobeListComponent ranobeList={ranobeList}></RanobeListComponent>
       ) : (
-        <Typography variant="h6">local list is empty</Typography>
+        !loading && <Typography variant="h6">local list is empty</Typography>
       )}
     </Container>
   )
