@@ -2,6 +2,7 @@ import DefaultLayout from '../layouts/default.layout'
 import App from '../pages/app/App'
 import RanobeLibMe from '../pages/ranobelibme'
 import RanobeLibMeId from '../pages/ranobelibme/ranobelibme-id'
+import RanobeLibMeUser from '../pages/ranobelibme/ranobelibme-user'
 
 const routes = [
   {
@@ -18,9 +19,14 @@ const routes = [
         component: RanobeLibMe
       },
       {
-        path: '/ranobelibme/:id',
+        path: '/ranobelibme/ranobe/:id',
         exact: false,
         component: RanobeLibMeId
+      },
+      {
+        path: '/ranobelibme/user/:id',
+        exact: false,
+        component: RanobeLibMeUser
       }
     ]
   }

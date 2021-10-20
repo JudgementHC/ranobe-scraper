@@ -8,7 +8,7 @@ import {
   Typography
 } from '@mui/material'
 import { CSSProperties, useContext, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import apiAxios from '../../tools/axios'
 import { ISearchResponse } from '../../tools/responses/api.interface'
 import { StoreContext } from '../../tools/store'
@@ -76,6 +76,7 @@ export default function Header({ style }: Props): JSX.Element {
         </Box>
       </Toolbar>
 
+      {/* todo: необходимо добавить teleporter */}
       <SearchComponent
         title={title}
         show={modal}
@@ -97,30 +98,25 @@ interface BackLinkProps {
   closeEvent: () => void
 }
 function BackLink({ closeEvent }: BackLinkProps): JSX.Element {
-  const location = useLocation()
-  const paths = location.pathname.split('/')
-  paths.pop()
-  const previousRoute = paths.join('/')
+  const router = useHistory()
 
   useEffect(() => {
     return () => closeEvent()
   }, [])
 
   return (
-    <Link to={previousRoute}>
-      <MaterialLink component="button">
-        <Box display="flex" alignItems="center">
-          <ArrowBack color="action"></ArrowBack>
-          <Typography
-            variant="h6"
-            style={{ marginLeft: 15 }}
-            color="textPrimary"
-            noWrap
-          >
-            Back
-          </Typography>
-        </Box>
-      </MaterialLink>
-    </Link>
+    <MaterialLink onClick={router.goBack} component="button">
+      <Box display="flex" alignItems="center">
+        <ArrowBack color="action"></ArrowBack>
+        <Typography
+          variant="h6"
+          style={{ marginLeft: 15 }}
+          color="textPrimary"
+          noWrap
+        >
+          Back
+        </Typography>
+      </Box>
+    </MaterialLink>
   )
 }

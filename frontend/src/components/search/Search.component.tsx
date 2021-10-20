@@ -6,11 +6,14 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  List,
+  ListItem,
   TextField,
   Typography
 } from '@mui/material'
 import { blue, grey } from '@mui/material/colors'
 import { KeyboardEvent, useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { ERanobeUrls } from '../../tools/enums/Services.enum'
 import { ISearchResponse } from '../../tools/responses/api.interface'
 import { StoreContext } from '../../tools/store'
@@ -56,6 +59,7 @@ export default function SearchComponent({
       <DialogTitle id="scroll-dialog-title">
         <Box display="flex" alignItems="center" mb="15px">
           <TextField
+            type="search"
             label="Title"
             value={title}
             onChange={value => textFieldChange(value.target.value)}
@@ -72,9 +76,11 @@ export default function SearchComponent({
             style={{
               marginRight: '10px',
               color: 'white',
-              backgroundColor: type === 'manga' ? blue[800] : grey[700]
+              backgroundColor:
+                type === 'manga' && !loading ? blue[800] : grey[700]
             }}
             onClick={() => typeChange('manga')}
+            disabled={loading}
           >
             Ranobe
           </Button>
@@ -82,9 +88,11 @@ export default function SearchComponent({
           <Button
             style={{
               color: 'white',
-              backgroundColor: type === 'user' ? blue[800] : grey[700]
+              backgroundColor:
+                type === 'user' && !loading ? blue[800] : grey[700]
             }}
             onClick={() => typeChange('user')}
+            disabled={loading}
           >
             User
           </Button>
@@ -92,37 +100,45 @@ export default function SearchComponent({
       </DialogTitle>
 
       <DialogContent dividers={true}>
-        {result.map((item, index) => {
-          const temp = {
-            title: '',
-            src: ''
-          }
+        <List>
+          {result.map((item, index) => {
+            const temp = {
+              title: '',
+              src: '',
+              href: ''
+            }
 
-          if (type === 'user') {
-            temp.title = item.value
-            temp.src = `${ERanobeUrls.RANOBELIBME}/uploads/users/${item.id}/${item.avatar}`
-          } else if (type === 'manga') {
-            temp.title = item.eng_name
-            temp.src = item.covers.thumbnail
-          }
+            if (type === 'user') {
+              temp.title = item.value
+              temp.src = `${ERanobeUrls.RANOBELIBME}/uploads/users/${item.id}/${item.avatar}`
+              temp.href = `/ranobelibme/user/${item.id}`
+            } else if (type === 'manga') {
+              temp.title = `${item.eng_name}\n${item.rus_name}`
+              temp.src = item.covers.thumbnail
+              temp.href = `/ranobelibme/ranobe/${item.slug}?title=${item.rus_name}`
+            }
 
-          return (
-            <div style={{ marginBottom: '20px' }}>
-              <Box
-                key={index}
-                sx={{ display: 'flex', mb: '20px', alignItems: 'center' }}
-              >
-                <img
-                  style={{ marginRight: '10px', display: 'block' }}
-                  src={temp.src}
-                />
-                <Typography>{temp.title}</Typography>
-              </Box>
+            return (
+              <ListItem key={index} sx={{ mb: '20px', display: 'block' }}>
+                <Link onClick={closeEvent} to={temp.href}>
+                  <Box
+                    sx={{ display: 'flex', mb: '20px', alignItems: 'center' }}
+                  >
+                    <img
+                      style={{ marginRight: '10px', display: 'block' }}
+                      src={temp.src}
+                    />
+                    <Typography whiteSpace="pre-wrap">{temp.title}</Typography>
+                  </Box>
+                </Link>
 
-              {index !== result.length - 1 && <Divider variant="fullWidth" />}
-            </div>
-          )
-        })}
+                {index !== result.length - 1 && (
+                  <Divider sx={{ pt: '10px' }} variant="fullWidth" />
+                )}
+              </ListItem>
+            )
+          })}
+        </List>
       </DialogContent>
 
       <DialogActions>

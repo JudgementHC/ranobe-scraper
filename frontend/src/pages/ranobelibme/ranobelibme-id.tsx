@@ -76,7 +76,7 @@ export default function RanobeLibMeId(): JSX.Element {
     const fetchChapters = async () => {
       try {
         setLoading(true)
-        const response = (await apiAxios.get('/availableChapters', {
+        const response = (await apiAxios.get('/chapters', {
           cancelToken: request.token,
           params: paramsT,
           timeout: 0
@@ -156,13 +156,18 @@ async function downloadRanobe(
   if (ranobeHrefList.length) {
     try {
       setLoading(true)
-      const response = await apiAxios.post('/download', downloadParams, {
+      const response = (await apiAxios.post('/download', downloadParams, {
         cancelToken: request.token,
-        timeout: 0
-      })
+        timeout: 0,
+        responseType: 'blob'
+      })) as Blob
+
+      const blob = new Blob([response], { type: 'application/epub+zip' })
+      const url = window.URL.createObjectURL(blob)
+      window.open(url, '_blank')
 
       setSnackbar({
-        message: `Ranobe downloaded, server response: ${response}`,
+        message: 'Ranobe is generated',
         show: true,
         type: 'success'
       })

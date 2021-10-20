@@ -13,34 +13,36 @@ export default function RanobeListComponent(props: IListProps): JSX.Element {
     <List>
       {props.ranobeList.map((ranobe, index) => {
         return (
-          <>
-            <ListItem>
-              <Box
-                sx={{ display: 'flex', alignItems: 'center', mb: '15px' }}
-                key={index}
+          <ListItem key={index} sx={{ display: 'block' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                mb: '15px',
+                width: '100%'
+              }}
+            >
+              <Link
+                className={style.link}
+                to={`/ranobelibme/ranobe/${ranobe.href}?title=${ranobe.title}`}
               >
-                <Link
-                  className={style.link}
-                  to={`/ranobelibme/${ranobe.href}?title=${ranobe.title}`}
-                >
-                  <div className={style.wrap}>
-                    <img
-                      className={style.image}
-                      src={`${ERanobeUrls.STATICLIB}/${ranobe.cover}`}
-                      alt={ranobe.title}
-                      loading="lazy"
-                    />
-                  </div>
+                <div className={style.wrap}>
+                  <img
+                    className={style.image}
+                    src={`${ERanobeUrls.STATICLIB}/${ranobe.cover}`}
+                    alt={ranobe.title}
+                    loading="lazy"
+                  />
+                </div>
 
-                  <Typography variant="h6" color="textPrimary">
-                    {ranobe.title}
-                  </Typography>
-                </Link>
-              </Box>
-            </ListItem>
+                <Typography variant="h6" color="textPrimary">
+                  {ranobe.title}
+                </Typography>
+              </Link>
+            </Box>
 
             <Divider variant="fullWidth" />
-          </>
+          </ListItem>
         )
       })}
     </List>

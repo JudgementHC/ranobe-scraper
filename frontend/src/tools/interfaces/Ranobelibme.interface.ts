@@ -2,6 +2,7 @@ export interface IRanobelibmeIdQuery {
   href: string
   title?: string
   reload?: boolean
+  userId?: string
 }
 
 export interface IRanobelibmeIdDownload {
