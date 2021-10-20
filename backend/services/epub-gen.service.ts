@@ -39,7 +39,7 @@ export default class EpubGenService {
     this.utils = new UtilsService()
   }
 
-  async generate(): Promise<unknown> {
+  async generate(): Promise<string[]> {
     const title = this.utils.namePattern({
       title: this.metadata.title,
       start: this.start,
@@ -63,7 +63,9 @@ export default class EpubGenService {
 
     await this.utils.checkFolder(directory)
 
-    return epub.writeEPUB(directory, title)
+    await epub.writeEPUB(directory, title)
+
+    return [`${directory}/${title}.epub`, title]
   }
 }
 

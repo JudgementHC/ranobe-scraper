@@ -1,8 +1,10 @@
 import fs from 'fs'
 import path from 'path'
-import puppeteer, { Browser, Page } from 'puppeteer'
+import puppeteer, { Browser, Page, Protocol } from 'puppeteer'
 import PuppeteerExtra from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import { TRanobeServices } from '../tools/types/Services.type'
+import Sessions from '../tools/sessions.json'
 
 interface IRanobePatternParams {
   dir?: string
@@ -63,5 +65,10 @@ export default class UtilsService {
     return `${dir ? dir + '/' : ''}${title} (start ${start}, end ${end})${
       ext ? '.' + ext : ''
     }`
+  }
+
+  getCookies(service: TRanobeServices): Protocol.Network.Cookie[] {
+    const cookies = Sessions[service].cookies as Protocol.Network.Cookie[]
+    return cookies
   }
 }

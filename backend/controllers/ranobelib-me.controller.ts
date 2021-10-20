@@ -11,7 +11,7 @@ import RanobeLibMeService, {
 import TempDBService from '../services/temp-db.service'
 import UtilsService from '../services/utils.service'
 import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
-import { IUser } from '../tools/interfaces/User.interface'
+import { IRanobe, IUser } from '../tools/interfaces/User.interface'
 import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
 
 @autoInjectable()
@@ -52,41 +52,31 @@ export default class RanobeLibMeController implements IRanobeController {
           return res.json(user)
         }
       } catch (error) {
-        res.sendStatus(404)
+        res.sendStatus(500)
       }
     }
   }
 
-  getUserRanobeList(): RequestHandler {
+  ranobeList(): RequestHandler {
     return async (req, res) => {
-      const user = this.dbModel.getLocalUser()
+      type TUserListQuery = {
+        userId: number
+        local: boolean
+      }
+      const { userId, local } = req.query as unknown as TUserListQuery
+      let data: IRanobe[] | undefined = []
 
-      if (user) {
-        const cookies = this.dbModel.getCookies()
-
-        const ranobeList = await this.ranobeLibMeService.getUserRanobeList(
-          cookies,
-          user.identifier
-        )
-
-        await this.dbModel.setLocalList(ranobeList)
-
-        return res.json(ranobeList)
+      if (local) {
+        data = this.dbModel.getLocalList()
+      } else if (userId) {
+        data = await this.ranobeLibMeService.getRanobeList(userId)
       }
 
-      res.sendStatus(404)
-    }
-  }
-
-  getLocalRanobeList(): RequestHandler {
-    return (req, res) => {
-      const localList = this.dbModel.getLocalList()
-
-      if (localList) {
-        return res.json(localList)
+      if (data) {
+        return res.json(data)
       }
 
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 
@@ -104,14 +94,20 @@ export default class RanobeLibMeController implements IRanobeController {
         return res.json(data)
       }
 
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 
   chapters(): RequestHandler {
     return async (req, res) => {
-      type TChaptersQuery = { title: string; href: string; reload: boolean }
+      type TChaptersQuery = {
+        title: string
+        href: string
+        reload: boolean
+      }
+
       const { title, href, reload } = req.query as unknown as TChaptersQuery
+
       if (href) {
         if (!reload) {
           const ranobe = await this.dbModel.getChapters(title)
@@ -121,12 +117,12 @@ export default class RanobeLibMeController implements IRanobeController {
           }
         }
 
-        const data = await this.ranobeLibMeService.getAvailableChapters(href)
+        const data = await this.ranobeLibMeService.getChapters(href)
         title && (await this.dbModel.setChapters(title, data))
         return res.json(data)
       }
 
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 
@@ -178,14 +174,17 @@ export default class RanobeLibMeController implements IRanobeController {
           start,
           end
         )
-        await epubGenService.generate()
 
-        return res.sendStatus(200)
+        const [filePath, filename] = await epubGenService.generate()
+
+        return res.sendFile(filePath, {
+          fileName: filename
+        })
       } catch (error) {
         this.logger.error(error as Error)
       }
 
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 }

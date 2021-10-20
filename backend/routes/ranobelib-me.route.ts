@@ -19,6 +19,8 @@ class RanobeLibMeRouter implements IRanobeRouter {
     this.router.get('/chapters', this.ranobelibmeController.chapters())
 
     this.router.post('/download', this.ranobelibmeController.download())
+
+    this.router.get('/ranobeList', this.ranobelibmeController.ranobeList())
   }
 }
 

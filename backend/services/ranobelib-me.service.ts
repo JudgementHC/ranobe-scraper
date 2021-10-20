@@ -21,6 +21,7 @@ export type TSearchType = 'manga' | 'user'
 export default class RanobeLibMeService implements DefaultService {
   baseUrl = ERanobeUrls.RANOBELIBME
   logger = new Logger()
+  private cookies = this.utils.getCookies('RANOBELIBME')
 
   constructor(private utils: UtilsService) {}
 
@@ -55,15 +56,14 @@ export default class RanobeLibMeService implements DefaultService {
       cookie => cookie.name.charAt(0) !== '_'
     )
 
-    const ranobeList = await this.getUserRanobeList(cookies, identifier)
+    const ranobeList = await this.getRanobeList(identifier)
 
     await browser.close()
 
     return [cookies, identifier, ranobeList]
   }
 
-  async getUserRanobeList(
-    cookies: Protocol.Network.Cookie[],
+  async getRanobeList(
     userId: number,
     page?: Page,
     browser?: Browser
@@ -72,7 +72,7 @@ export default class RanobeLibMeService implements DefaultService {
 
     if (!page || !browser) {
       ;[page, browser] = await this.utils.getPuppeeterStealth()
-      await page.setCookie(...cookies)
+      await page.setCookie(...this.cookies)
     }
 
     await page.goto(ranobeListUrl, {
@@ -137,7 +137,7 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  async getAvailableChapters(href: string): Promise<Chapter[]> {
+  async getChapters(href: string): Promise<Chapter[]> {
     const url = `${this.baseUrl}/${href}?section=chapters`
 
     const [page, browser] = await this.utils.getPuppeeterStealth()

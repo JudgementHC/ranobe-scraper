@@ -1,0 +1,48 @@
+{
+  "RANOBELIBME": {
+    "cookies": [
+      {
+        "name": "remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d",
+        "value": "eyJpdiI6IlZlUTdUNi96K2lUYWpCckJmUCtVSkE9PSIsInZhbHVlIjoiTkRUUlhEUGlsTi85cE1lVU80K1hjV2pvR044d0NjN2k5bTl3RDdPcDVBTU10UlBXMXBFWHdXdk8xTHZPUWlWdjZiVDJmbFRjL3FGZUs2NzNqdU5jKzE3R2pRV2Z3SUp1RnZjSWlaNXI0WHdMdmUyQUoxV1dMNWhNeG5acUVUWk1JcEorbUJIaXlOang0dlpJVkY0aW9tVG1JeXRhbzF1dDA3UzRnelpvNzU0M1FxMU0xVVNnWCtlYWNrZUs2aG8vRXdVaGxJU3orUjcwaXlhRDFLK2JCaXJ6Ykx6c2lvb2MxUVVDMTFmV1lIMD0iLCJtYWMiOiJlMTgwZWRhZjgzMGU2Y2JmNDM2Yjk4MjJhMGNiNjMwNzc4NzE2MWEwMzhlZDVjODU0NTkxNzRjYzE5MzQ0NTMxIn0%3D",
+        "domain": "ranobelib.me",
+        "path": "/",
+        "expires": 1789142224.577355,
+        "size": 527,
+        "httpOnly": true,
+        "secure": false,
+        "session": false,
+        "sameParty": false,
+        "sourceScheme": "Secure",
+        "sourcePort": 443
+      },
+      {
+        "name": "mangalib_session",
+        "value": "eyJpdiI6ImJCTVZNV21YTFNSZ0xHUEF6MEdCS0E9PSIsInZhbHVlIjoiUXNvMVRRVWNCTnlORzQ0UFdBNC9zeFpZbFkrbFlFTXVlWXE4VEUvOHhSKzlka2FIYUtTaFlOeVQzdyt0TER6N1d5VkQ1RCtaaytqOTdwaDhRcytaVWFhME84aXl3NXl2Q2kzaWRnUjRpclhjVFNwRE1lNVMyNVJZSCsydktMV3YiLCJtYWMiOiI0OTEzNDNmNjIxMGEwMzYwYWU5NGY3ZmM2Yjk0ZjhkZTU4YmFkNjNlZWFiNWRiMTEyYzVjMDY3ZGM5ZDk1MGI3In0%3D",
+        "domain": "ranobelib.me",
+        "path": "/",
+        "expires": 1631483825.908925,
+        "size": 346,
+        "httpOnly": true,
+        "secure": false,
+        "session": false,
+        "sameParty": false,
+        "sourceScheme": "Secure",
+        "sourcePort": 443
+      },
+      {
+        "name": "XSRF-TOKEN",
+        "value": "eyJpdiI6Imlkc0U1bURVeTF2dGlvV0cwZlkwSVE9PSIsInZhbHVlIjoiUWRJWVZnTHphd2t6bUtQN2ZMSHk2OTZNNldndlVzcHBneVpFb2JKUE10TGNGMW9qTGRWZmEvN3ZMYmt5SStrQUd5WldDdzN5a1R0L2hReFptZWFobVNFTUg4c3VTNGlPTml6ZFF1bnFINEVtTnU5elZ2Z0puY0M2UjBXNnAxVlQiLCJtYWMiOiIxZTliZjQ1OTNkYmQwNzUzMGY4Nzk2NjNlNzc4Zjk2ZDVlYTYwYjIzYmZlMDA1OTEyZTExY2RhY2I5MTliOTkxIn0%3D",
+        "domain": "ranobelib.me",
+        "path": "/",
+        "expires": 1631483825.908876,
+        "size": 340,
+        "httpOnly": false,
+        "secure": false,
+        "session": false,
+        "sameParty": false,
+        "sourceScheme": "Secure",
+        "sourcePort": 443
+      }
+    ]
+  }
+}

@@ -1,6 +1,4 @@
-import fs from 'fs'
 import path from 'path'
-import { Protocol } from 'puppeteer'
 import StormDB from 'stormdb'
 import { Logger } from 'tslog'
 import { Chapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
@@ -11,6 +9,8 @@ export default class DBmodelService {
   private stormDB!: StormDB
   private logger = new Logger()
   private utils = new UtilsService()
+
+  private localUser = 'local'
 
   constructor(private serviceName: TRanobeServices) {
     this.init()
@@ -27,19 +27,21 @@ export default class DBmodelService {
     const engine = new StormDB.localFileEngine(fullPath)
     this.stormDB = new StormDB(engine)
     this.stormDB.default({
-      user: {
-        ranobeList: []
+      [this.serviceName]: {
+        users: {
+          [this.localUser]: {
+            ranobe: []
+          }
+        }
       }
     })
   }
 
   getLocalList = (): IRanobe[] | undefined => {
     try {
-      return this.stormDB
-        .get(this.serviceName)
-        .get('user')
-        .get('ranobeList')
-        .value() as IRanobe[]
+      const user = this.stormDB.get(this.serviceName).get('ranobe')
+
+      return user.get('ranobe').value() as IRanobe[]
     } catch (error) {
       return
     }
@@ -47,9 +49,23 @@ export default class DBmodelService {
 
   setLocalList = async (data: IRanobe[]): Promise<void> => {
     try {
-      const userState = this.stormDB.get(this.serviceName).get('user')
-      const list = userState.get('ranobeList')
-      list.set(data)
+      const usersState = this.stormDB.get(this.serviceName)
+      const list = usersState.get('ranobe')
+
+      const ranobeList: IRanobe[] = list.value()
+
+      data.forEach(ranobe => {
+        const ranobeIndex = ranobeList.findIndex(
+          item => item.href === ranobe.href
+        )
+        if (ranobeIndex >= 0) {
+          ranobeList[ranobeIndex] = ranobe
+        } else {
+          ranobeList.push(ranobe)
+        }
+      })
+
+      list.set(ranobeList)
       await list.save()
     } catch (error) {
       this.logger.error(error)
@@ -65,21 +81,6 @@ export default class DBmodelService {
     }
   }
 
-  getLocalUser = (): IUser | undefined => {
-    try {
-      return this.stormDB.get(this.serviceName).get('user').value() as IUser
-    } catch (error) {
-      return
-    }
-  }
-
-  getCookies = (): Protocol.Network.Cookie[] => {
-    const userState = this.stormDB.get(this.serviceName).get('user')
-    return userState
-      .get('cookies')
-      .value() as unknown as Protocol.Network.Cookie[]
-  }
-
   setChapters = async (title: string, chapters: Chapter[]): Promise<void> => {
     const localList = this.getLocalList()
     const ranobe = localList?.find(el => el.title === title) as IRanobe
@@ -87,7 +88,7 @@ export default class DBmodelService {
     if (ranobe) {
       const serviceDB = this.stormDB.get(this.serviceName)
       ranobe.chapters = chapters
-      serviceDB.get('user').set('ranobeList', localList)
+      serviceDB.get('user').set('ranobe', localList)
       await this.stormDB.save()
     }
   }
