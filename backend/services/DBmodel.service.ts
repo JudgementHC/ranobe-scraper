@@ -10,8 +10,6 @@ export default class DBmodelService {
   private logger = new Logger()
   private utils = new UtilsService()
 
-  private localUser = 'local'
-
   constructor(private serviceName: TRanobeServices) {
     this.init()
   }
@@ -28,48 +26,50 @@ export default class DBmodelService {
     this.stormDB = new StormDB(engine)
     this.stormDB.default({
       [this.serviceName]: {
-        users: {
-          [this.localUser]: {
-            ranobe: []
-          }
-        }
+        ranobe: []
       }
     })
   }
 
-  getLocalList = (): IRanobe[] | undefined => {
+  getLocalList = (): IRanobe[] => {
+    let ranobeList: IRanobe[] = []
     try {
-      const user = this.stormDB.get(this.serviceName).get('ranobe')
-
-      return user.get('ranobe').value() as IRanobe[]
+      ranobeList = this.stormDB
+        .get(this.serviceName)
+        .get('ranobe')
+        .value() as IRanobe[]
     } catch (error) {
-      return
+      console.error(error)
     }
+    return ranobeList
   }
 
   setLocalList = async (data: IRanobe[]): Promise<void> => {
+    const usersState = this.stormDB.get(this.serviceName)
+    const list = usersState.get('ranobe')
+    let listValue = []
+
     try {
-      const usersState = this.stormDB.get(this.serviceName)
-      const list = usersState.get('ranobe')
-
-      const ranobeList: IRanobe[] = list.value()
-
-      data.forEach(ranobe => {
-        const ranobeIndex = ranobeList.findIndex(
-          item => item.href === ranobe.href
-        )
-        if (ranobeIndex >= 0) {
-          ranobeList[ranobeIndex] = ranobe
-        } else {
-          ranobeList.push(ranobe)
-        }
-      })
-
-      list.set(ranobeList)
-      await list.save()
+      listValue = list.value()
     } catch (error) {
       this.logger.error(error)
     }
+
+    const ranobeList: IRanobe[] = listValue?.length ? listValue : []
+
+    data.forEach(ranobe => {
+      const ranobeIndex = ranobeList.findIndex(
+        item => item.href === ranobe.href
+      )
+      if (ranobeIndex >= 0) {
+        ranobeList[ranobeIndex] = ranobe
+      } else {
+        ranobeList.push(ranobe)
+      }
+    })
+
+    list.set(ranobeList)
+    await list.save()
   }
 
   setLocalUser = async (user: IUser): Promise<void> => {
@@ -88,7 +88,7 @@ export default class DBmodelService {
     if (ranobe) {
       const serviceDB = this.stormDB.get(this.serviceName)
       ranobe.chapters = chapters
-      serviceDB.get('user').set('ranobe', localList)
+      serviceDB.set('ranobe', localList)
       await this.stormDB.save()
     }
   }

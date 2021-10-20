@@ -73,6 +73,11 @@ export default class RanobeLibMeController implements IRanobeController {
       }
 
       if (data) {
+        try {
+          this.dbModel.setLocalList(data)
+        } catch (error) {
+          this.logger.error(error)
+        }
         return res.json(data)
       }
 
