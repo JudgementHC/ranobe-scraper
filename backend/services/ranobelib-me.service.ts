@@ -280,7 +280,7 @@ export default class RanobeLibMeService implements DefaultService {
     let [, start] = this.parseLink(ranobeHrefList[0])
     let [, end] = this.parseLink(ranobeHrefList[ranobeHrefList.length - 1])
 
-    if (start > end) {
+    if (+start && +end && +start > +end) {
       const temp = start
       start = end
       end = temp

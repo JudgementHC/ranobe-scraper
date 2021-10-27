@@ -1,8 +1,7 @@
-import path from 'path'
+import fs from 'fs'
 import { v4 } from 'uuid'
 import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
 import UtilsService from './utils.service'
-import fs from 'fs'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodepub = require('nodepub')
@@ -88,6 +87,6 @@ function fillRandomData(obj: any) {
   ]
 
   keys.forEach(key => {
-    obj[key] = v4()
+    obj[key] = key
   })
 }
