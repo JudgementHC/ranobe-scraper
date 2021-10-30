@@ -1,7 +1,11 @@
 import path from 'path'
 import StormDB from 'stormdb'
 import { Logger } from 'tslog'
-import { IChapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
+import {
+  IRanobe,
+  IUser,
+  IChapter
+} from '../tools/interfaces/Ranobelibme.interface'
 import { TRanobeServices } from '../tools/types/Services.type'
 import UtilsService from './Utils.service'
 

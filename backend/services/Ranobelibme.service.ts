@@ -2,24 +2,20 @@ import { Browser, Page, Protocol } from 'puppeteer'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
-import { DefaultService } from '../tools/interfaces/RanobeService.interface'
-import { IChapter, IRanobe } from '../tools/interfaces/User.interface'
 import {
+  IChapter,
+  IGetChapters,
+  ILoginForm,
+  IRanobe,
   IReaderContainer,
   ISearchResponse
-} from '../tools/service-responses/Ranobelibme.response'
-import { TGetChapters } from '../tools/types/Ranobelibme.type'
+} from '../tools/interfaces/Ranobelibme.interface'
+import { IDefaultService } from '../tools/interfaces/Services.interface'
+import { TSearchType } from '../tools/types/Ranobelibme.type'
 import UtilsService from './Utils.service'
 
-export interface ILoginForm {
-  email: string
-  password: string
-}
-
-export type TSearchType = 'manga' | 'user'
-
 @autoInjectable()
-export default class RanobeLibMeService implements DefaultService {
+export default class RanobeLibMeService implements IDefaultService {
   baseUrl = ERanobeUrls.RANOBELIBME
   logger = new Logger()
   private cookies = this.utils.getCookies('RANOBELIBME')
@@ -141,7 +137,7 @@ export default class RanobeLibMeService implements DefaultService {
   async getChapters(
     href: string,
     translate: string
-  ): Promise<TGetChapters | string[]> {
+  ): Promise<IGetChapters | string[]> {
     const url = `${this.baseUrl}/${href}?section=chapters`
 
     const [page, browser] = await this.utils.getPuppeeterStealth()
@@ -247,7 +243,7 @@ export default class RanobeLibMeService implements DefaultService {
       return {
         chapters: Array.from(innerData.values()),
         cover
-      } as TGetChapters
+      } as IGetChapters
     }, translate)
 
     await browser.close()

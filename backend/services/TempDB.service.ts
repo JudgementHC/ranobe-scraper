@@ -1,13 +1,10 @@
 import fs from 'fs'
 import { autoInjectable } from 'tsyringe'
-import { IReaderContainer } from '../tools/service-responses/Ranobelibme.response'
+import {
+  IName,
+  IReaderContainer
+} from '../tools/interfaces/Ranobelibme.interface'
 import UtilsService from './Utils.service'
-
-interface IName {
-  title: string
-  start: string
-  end: string
-}
 
 @autoInjectable()
 export default class TempDBService {

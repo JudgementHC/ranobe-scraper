@@ -1,3 +1,3 @@
-import { IChapter } from '../interfaces/User.interface'
+import { IChapter } from '../interfaces/Ranobelibme.interface'
 
-export type TGetChapters = { chapters: IChapter[]; cover: string }
+export type TSearchType = 'manga' | 'user'

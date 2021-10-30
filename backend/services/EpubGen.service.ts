@@ -1,30 +1,12 @@
 import fs from 'fs'
-import { v4 } from 'uuid'
-import { IReaderContainer } from '../tools/service-responses/Ranobelibme.response'
+import {
+  IEpubMetaData,
+  IReaderContainer
+} from '../tools/interfaces/Ranobelibme.interface'
 import UtilsService from './Utils.service'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodepub = require('nodepub')
-
-export interface IEpubMetaData {
-  title: string
-  id?: string
-  author?: string
-  cover?: string
-  series?: string
-  sequence?: number
-  fileAs?: string
-  genre?: string
-  tags?: string
-  copyright?: string
-  publisher?: string
-  published?: string
-  language?: string
-  description?: string
-  contents?: string
-  source?: string
-  images: string[]
-}
 
 export default class EpubGenService {
   private utils: UtilsService

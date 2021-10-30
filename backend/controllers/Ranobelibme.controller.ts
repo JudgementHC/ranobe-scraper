@@ -3,17 +3,23 @@ import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import DBmodelService from '../services/DBmodel.service'
-import EpubGenService, { IEpubMetaData } from '../services/EpubGen.service'
-import RanobeLibMeService, {
-  ILoginForm,
-  TSearchType
-} from '../services/Ranobelibme.service'
+import EpubGenService from '../services/EpubGen.service'
+import RanobeLibMeService from '../services/Ranobelibme.service'
 import TempDBService from '../services/TempDB.service'
 import UtilsService from '../services/Utils.service'
-import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
-import { IRanobe, IUser, IChapter } from '../tools/interfaces/User.interface'
-import { IReaderContainer } from '../tools/service-responses/Ranobelibme.response'
-import { TGetChapters } from '../tools/types/Ranobelibme.type'
+import {
+  IChaptersQuery,
+  IDownloadQuery,
+  IEpubMetaData,
+  IGetChapters,
+  ILoginForm,
+  IRanobe,
+  IReaderContainer,
+  ISearchQuery,
+  IUser,
+  IUserListQuery
+} from '../tools/interfaces/Ranobelibme.interface'
+import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()
 export default class RanobeLibMeController implements IRanobeController {
@@ -60,11 +66,7 @@ export default class RanobeLibMeController implements IRanobeController {
 
   ranobeList(): RequestHandler {
     return async (req, res) => {
-      type TUserListQuery = {
-        userId: number
-        local: boolean
-      }
-      const { userId, local } = req.query as unknown as TUserListQuery
+      const { userId, local } = req.query as unknown as IUserListQuery
       let data: IRanobe[] | undefined = []
 
       if (local) {
@@ -88,11 +90,7 @@ export default class RanobeLibMeController implements IRanobeController {
 
   search(): RequestHandler {
     return async (req, res) => {
-      type TSearchQuery = {
-        title: string
-        type: TSearchType
-      }
-      const { title, type } = req.query as TSearchQuery
+      const { title, type } = req.query as unknown as ISearchQuery
 
       if (title && type) {
         const data = await this.ranobeLibMeService.search(title, type)
@@ -106,15 +104,8 @@ export default class RanobeLibMeController implements IRanobeController {
 
   chapters(): RequestHandler {
     return async (req, res) => {
-      type TChaptersQuery = {
-        title: string
-        href: string
-        reload: boolean
-        translate: string
-      }
-
       const { title, href, reload, translate } =
-        req.query as unknown as TChaptersQuery
+        req.query as unknown as IChaptersQuery
 
       if (href) {
         if (!reload) {
@@ -126,7 +117,7 @@ export default class RanobeLibMeController implements IRanobeController {
         }
 
         const data = await this.ranobeLibMeService.getChapters(href, translate)
-        const dataT = data as TGetChapters
+        const dataT = data as IGetChapters
         if (title && dataT?.chapters[0]?.title) {
           await this.dbModel.setChapters(
             title,
@@ -144,13 +135,7 @@ export default class RanobeLibMeController implements IRanobeController {
 
   download(): RequestHandler {
     return async (req, res) => {
-      type TDownloadQuery = {
-        title: string
-        ranobeHrefList: string[]
-        reload: boolean
-      }
-
-      const { title, ranobeHrefList, reload } = req.body as TDownloadQuery
+      const { title, ranobeHrefList, reload } = req.body as IDownloadQuery
 
       const { start, end } =
         this.ranobeLibMeService.getChaptersRange(ranobeHrefList)
