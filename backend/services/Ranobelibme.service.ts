@@ -7,9 +7,9 @@ import { IChapter, IRanobe } from '../tools/interfaces/User.interface'
 import {
   IReaderContainer,
   ISearchResponse
-} from '../tools/service-responses/ranobelib-me.response'
+} from '../tools/service-responses/Ranobelibme.response'
 import { TGetChapters } from '../tools/types/Ranobelibme.type'
-import UtilsService from './utils.service'
+import UtilsService from './Utils.service'
 
 export interface ILoginForm {
   email: string

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { autoInjectable } from 'tsyringe'
-import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
-import UtilsService from './utils.service'
+import { IReaderContainer } from '../tools/service-responses/Ranobelibme.response'
+import UtilsService from './Utils.service'
 
 interface IName {
   title: string

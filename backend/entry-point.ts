@@ -4,7 +4,7 @@ import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { Logger } from 'tslog'
-import RanobeLibMeRouter from './routes/ranobelib-me.route'
+import RanobeLibMeRouter from './routes/Ranobelibme.route'
 
 /*==================== INIT START ====================*/
 const app = express()

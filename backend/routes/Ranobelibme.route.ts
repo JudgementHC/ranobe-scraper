@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import 'reflect-metadata'
 import { autoInjectable, container } from 'tsyringe'
-import RanobeLibMeController from '../controllers/ranobelib-me.controller'
+import RanobeLibMeController from '../controllers/Ranobelibme.controller'
 import { IRanobeRouter } from '../tools/interfaces/RanobeService.interface'
 
 /*

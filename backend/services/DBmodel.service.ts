@@ -3,7 +3,7 @@ import StormDB from 'stormdb'
 import { Logger } from 'tslog'
 import { IChapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
 import { TRanobeServices } from '../tools/types/Services.type'
-import UtilsService from './utils.service'
+import UtilsService from './Utils.service'
 
 export default class DBmodelService {
   private stormDB!: StormDB

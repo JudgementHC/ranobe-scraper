@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { v4 } from 'uuid'
-import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
-import UtilsService from './utils.service'
+import { IReaderContainer } from '../tools/service-responses/Ranobelibme.response'
+import UtilsService from './Utils.service'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const nodepub = require('nodepub')

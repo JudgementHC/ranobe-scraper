@@ -3,16 +3,16 @@ import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import DBmodelService from '../services/DBmodel.service'
-import EpubGenService, { IEpubMetaData } from '../services/epub-gen.service'
+import EpubGenService, { IEpubMetaData } from '../services/EpubGen.service'
 import RanobeLibMeService, {
   ILoginForm,
   TSearchType
-} from '../services/ranobelib-me.service'
-import TempDBService from '../services/temp-db.service'
-import UtilsService from '../services/utils.service'
+} from '../services/Ranobelibme.service'
+import TempDBService from '../services/TempDB.service'
+import UtilsService from '../services/Utils.service'
 import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
 import { IRanobe, IUser, IChapter } from '../tools/interfaces/User.interface'
-import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
+import { IReaderContainer } from '../tools/service-responses/Ranobelibme.response'
 import { TGetChapters } from '../tools/types/Ranobelibme.type'
 
 @autoInjectable()
