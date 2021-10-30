@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import 'reflect-metadata'
 import { autoInjectable, container } from 'tsyringe'
-import RanobeLibMeController from '../controllers/Ranobelibme.controller'
+import RanobelibmeController from '../controllers/Ranobelibme.controller'
 import { IRanobeRouter } from '../tools/interfaces/Services.interface'
 
 /*
@@ -11,10 +11,10 @@ import { IRanobeRouter } from '../tools/interfaces/Services.interface'
 // todo: необходимо добавить type message, чтобы отправлять ошибки с бекенда на фронт
 // todo: добавь возможность прерывания процесса chromium, когда axios с фронта прекращает запрос
 @autoInjectable()
-class RanobeLibMeRouter implements IRanobeRouter {
+class RanobelibmeRouter implements IRanobeRouter {
   router: Router = Router()
 
-  constructor(private ranobelibmeController: RanobeLibMeController) {
+  constructor(private ranobelibmeController: RanobelibmeController) {
     this.router.get('/search', this.ranobelibmeController.search())
 
     this.router.get('/chapters', this.ranobelibmeController.chapters())
@@ -25,4 +25,4 @@ class RanobeLibMeRouter implements IRanobeRouter {
   }
 }
 
-export default container.resolve(RanobeLibMeRouter)
+export default container.resolve(RanobelibmeRouter)

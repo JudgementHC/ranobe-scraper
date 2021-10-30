@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
-import RanobeLibMeService from '../services/Ranobelibme.service'
+import RanobelibmeService from '../services/Ranobelibme.service'
 import TempDBService from '../services/shared/ChaptersDB.service'
 import DBmodelService from '../services/shared/DBmodel.service'
 import EpubGenService from '../services/shared/EpubGen.service'
@@ -20,12 +20,12 @@ import {
 import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()
-export default class RanobeLibMeController implements IRanobeController {
+export default class RanobelibmeController implements IRanobeController {
   dbModel: DBmodelService
   private logger = new Logger()
 
   constructor(
-    private ranobeLibMeService: RanobeLibMeService,
+    private ranobeLibMeService: RanobelibmeService,
     private tempDBService: TempDBService,
     private utils: UtilsService
   ) {

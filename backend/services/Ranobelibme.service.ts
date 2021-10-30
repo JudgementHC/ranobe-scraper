@@ -14,7 +14,7 @@ import { TSearchType } from '../tools/types/Ranobelibme.type'
 import UtilsService from './shared/Utils.service'
 
 @autoInjectable()
-export default class RanobeLibMeService implements IRanobeService {
+export default class RanobelibmeService implements IRanobeService {
   baseUrl = ERanobeUrls.RANOBELIBME
   logger = new Logger()
   private cookies = this.utils.getCookies('RANOBELIBME')
