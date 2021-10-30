@@ -1,7 +1,7 @@
 import path from 'path'
 import StormDB from 'stormdb'
 import { Logger } from 'tslog'
-import { Chapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
+import { IChapter, IRanobe, IUser } from '../tools/interfaces/User.interface'
 import { TRanobeServices } from '../tools/types/Services.type'
 import UtilsService from './utils.service'
 
@@ -81,19 +81,33 @@ export default class DBmodelService {
     }
   }
 
-  setChapters = async (title: string, chapters: Chapter[]): Promise<void> => {
+  setChapters = async (
+    title: string,
+    chapters: IChapter[],
+    href = '',
+    cover = ''
+  ): Promise<void> => {
     const localList = this.getLocalList()
-    const ranobe = localList?.find(el => el.title === title) as IRanobe
+    const foundRanobe = localList?.find(el => el.title === title) as IRanobe
+    const serviceDB = this.stormDB.get(this.serviceName)
 
-    if (ranobe) {
-      const serviceDB = this.stormDB.get(this.serviceName)
-      ranobe.chapters = chapters
+    if (foundRanobe) {
+      foundRanobe.chapters = chapters
       serviceDB.set('ranobe', localList)
       await this.stormDB.save()
+    } else {
+      const newRanobe: IRanobe = {
+        title,
+        href,
+        cover,
+        chapters
+      }
+      localList.push(newRanobe)
+      serviceDB.set('ranobe', localList)
     }
   }
 
-  getChapters = async (title: string): Promise<Chapter[] | undefined> => {
+  getChapters = async (title: string): Promise<IChapter[] | undefined> => {
     const localList = this.getLocalList()
     const targetRanobe = localList?.find(ranobe => title === ranobe.title)
     return targetRanobe?.chapters

@@ -3,11 +3,12 @@ import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
 import { DefaultService } from '../tools/interfaces/RanobeService.interface'
-import { Chapter, IRanobe } from '../tools/interfaces/User.interface'
+import { IChapter, IRanobe } from '../tools/interfaces/User.interface'
 import {
   IReaderContainer,
   ISearchResponse
 } from '../tools/service-responses/ranobelib-me.response'
+import { TGetChapters } from '../tools/types/Ranobelibme.type'
 import UtilsService from './utils.service'
 
 export interface ILoginForm {
@@ -31,7 +32,7 @@ export default class RanobeLibMeService implements DefaultService {
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
     await page.goto(this.baseUrl, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'domcontentloaded'
     })
 
     await page.$('body')
@@ -76,7 +77,7 @@ export default class RanobeLibMeService implements DefaultService {
     }
 
     await page.goto(ranobeListUrl, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'domcontentloaded'
     })
     await page.$('body')
 
@@ -121,7 +122,7 @@ export default class RanobeLibMeService implements DefaultService {
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
     await page.goto(searchUrl, {
-      waitUntil: 'networkidle2'
+      waitUntil: 'domcontentloaded'
     })
 
     await page.content()
@@ -137,7 +138,10 @@ export default class RanobeLibMeService implements DefaultService {
     return data
   }
 
-  async getChapters(href: string): Promise<Chapter[]> {
+  async getChapters(
+    href: string,
+    translate: string
+  ): Promise<TGetChapters | string[]> {
     const url = `${this.baseUrl}/${href}?section=chapters`
 
     const [page, browser] = await this.utils.getPuppeeterStealth()
@@ -147,13 +151,29 @@ export default class RanobeLibMeService implements DefaultService {
       height: 1080
     })
     await page.goto(url, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'domcontentloaded',
       timeout: 0
     })
     await page.content()
 
-    const data = (await page.evaluate(async () => {
-      const innerData = new Map<string, Chapter>()
+    const data = await page.evaluate(async translate => {
+      const tranlsateList = document.querySelectorAll(
+        '.media-section.media-chapters-teams .team-list-item'
+      )
+
+      if (tranlsateList.length) {
+        const arrayList = Array.from(tranlsateList)
+        if (translate) {
+          const foundTranslate = arrayList.find(
+            el => el.textContent?.trim() === translate
+          ) as HTMLElement
+          foundTranslate?.click()
+        } else {
+          return arrayList.map(el => el.textContent) as string[]
+        }
+      }
+
+      const innerData = new Map<string, IChapter>()
 
       try {
         let currentScroll = 0
@@ -171,7 +191,7 @@ export default class RanobeLibMeService implements DefaultService {
             const { children } = mediaChapterBody
 
             if (children.length) {
-              const temp: Chapter = {
+              const temp: IChapter = {
                 title: '',
                 href: '',
                 author: '',
@@ -219,8 +239,16 @@ export default class RanobeLibMeService implements DefaultService {
         this.logger.error(error)
       }
 
-      return Array.from(innerData.values())
-    })) as Chapter[]
+      const cover = document
+        .querySelector('.media-sidebar__cover.paper img')
+        ?.getAttribute('src')
+        ?.replace('https://staticlib.me', '')
+
+      return {
+        chapters: Array.from(innerData.values()),
+        cover
+      } as TGetChapters
+    }, translate)
 
     await browser.close()
 
@@ -236,7 +264,7 @@ export default class RanobeLibMeService implements DefaultService {
         const url = `${this.baseUrl}/${ranobeHref}`
 
         await page.goto(url, {
-          waitUntil: 'networkidle2'
+          waitUntil: 'domcontentloaded'
         })
         await page.content()
 

@@ -9,6 +9,7 @@ import { IRanobeRouter } from '../tools/interfaces/RanobeService.interface'
 */
 
 // todo: необходимо добавить type message, чтобы отправлять ошибки с бекенда на фронт
+// todo: добавь возможность прерывания процесса chromium, когда axios с фронта прекращает запрос
 @autoInjectable()
 class RanobeLibMeRouter implements IRanobeRouter {
   router: Router = Router()

@@ -26,6 +26,7 @@ app.use(helmet())
 app.use(morgan('combined'))
 /* ==================== MIDDLEWARE USING END ==================== */
 
+// todo: добавить сервис для парсинга https://infinitenoveltranslations.net/nidoume-no-jinsei-wo-isekai-de/
 /* ==================== ROUTES USE START ==================== */
 app.use('/ranobelibme', RanobeLibMeRouter.router)
 /* ==================== ROUTES USE END ==================== */

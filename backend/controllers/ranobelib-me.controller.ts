@@ -11,8 +11,9 @@ import RanobeLibMeService, {
 import TempDBService from '../services/temp-db.service'
 import UtilsService from '../services/utils.service'
 import { IRanobeController } from '../tools/interfaces/RanobeService.interface'
-import { IRanobe, IUser } from '../tools/interfaces/User.interface'
+import { IRanobe, IUser, IChapter } from '../tools/interfaces/User.interface'
 import { IReaderContainer } from '../tools/service-responses/ranobelib-me.response'
+import { TGetChapters } from '../tools/types/Ranobelibme.type'
 
 @autoInjectable()
 export default class RanobeLibMeController implements IRanobeController {
@@ -109,21 +110,31 @@ export default class RanobeLibMeController implements IRanobeController {
         title: string
         href: string
         reload: boolean
+        translate: string
       }
 
-      const { title, href, reload } = req.query as unknown as TChaptersQuery
+      const { title, href, reload, translate } =
+        req.query as unknown as TChaptersQuery
 
       if (href) {
         if (!reload) {
           const ranobe = await this.dbModel.getChapters(title)
 
           if (ranobe) {
-            return res.json(ranobe)
+            return res.json({ chapters: ranobe })
           }
         }
 
-        const data = await this.ranobeLibMeService.getChapters(href)
-        title && (await this.dbModel.setChapters(title, data))
+        const data = await this.ranobeLibMeService.getChapters(href, translate)
+        const dataT = data as TGetChapters
+        if (title && dataT?.chapters[0]?.title) {
+          await this.dbModel.setChapters(
+            title,
+            dataT.chapters,
+            href,
+            dataT.cover
+          )
+        }
         return res.json(data)
       }
 
