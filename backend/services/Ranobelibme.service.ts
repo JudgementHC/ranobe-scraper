@@ -1,30 +1,30 @@
-import { Browser, Page, Protocol } from 'puppeteer'
+import { Browser, Page } from 'puppeteer'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
 import {
   IChapter,
   IGetChapters,
-  ILoginForm,
   IRanobe,
   IReaderContainer,
   ISearchResponse
 } from '../tools/interfaces/Ranobelibme.interface'
-import { IDefaultService } from '../tools/interfaces/Services.interface'
+import { IRanobeService } from '../tools/interfaces/Services.interface'
 import { TSearchType } from '../tools/types/Ranobelibme.type'
 import UtilsService from './shared/Utils.service'
 
 @autoInjectable()
-export default class RanobeLibMeService implements IDefaultService {
+export default class RanobeLibMeService implements IRanobeService {
   baseUrl = ERanobeUrls.RANOBELIBME
   logger = new Logger()
   private cookies = this.utils.getCookies('RANOBELIBME')
 
   constructor(private utils: UtilsService) {}
 
-  async login(
-    loginForm: ILoginForm
-  ): Promise<[Protocol.Network.Cookie[], number, IRanobe[]]> {
+  async login(): Promise<void> {
+    const { RANOBELIBME_LOGIN, RANOBELIBME_PASS } = process.env
+    if (!RANOBELIBME_LOGIN || !RANOBELIBME_PASS) return
+
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
     await page.goto(this.baseUrl, {
@@ -35,29 +35,20 @@ export default class RanobeLibMeService implements IDefaultService {
 
     await page.click('#show-login-button')
     await page.waitForSelector('#sign-in-modal')
-    await page.type('input[name=email]', loginForm.email)
-    await page.type('input[name=password]', loginForm.password)
+    await page.type('input[name=email]', RANOBELIBME_LOGIN)
+    await page.type('input[name=password]', RANOBELIBME_PASS)
     await page.click('#sign-in-form .form__footer button[type=submit]')
     await page.waitForNavigation()
 
     await page.$('body')
 
-    const userAvatar = await page.$<HTMLElement>('.header-right-menu__avatar')
-    const identifier =
-      (await userAvatar?.evaluate(img => {
-        const src = img.getAttribute('src')?.split('/') || []
-        return +(src[src.length - 2] || 0)
-      })) || 0
-
     const cookies = (await page.cookies()).filter(
       cookie => cookie.name.charAt(0) !== '_'
     )
 
-    const ranobeList = await this.getRanobeList(identifier)
-
     await browser.close()
 
-    return [cookies, identifier, ranobeList]
+    this.utils.setCookies('RANOBELIBME', cookies)
   }
 
   async getRanobeList(

@@ -2,21 +2,19 @@ import { RequestHandler } from 'express'
 import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
-import DBmodelService from '../services/shared/DBmodel.service'
-import EpubGenService from '../services/shared/EpubGen.service'
 import RanobeLibMeService from '../services/Ranobelibme.service'
 import TempDBService from '../services/shared/ChaptersDB.service'
+import DBmodelService from '../services/shared/DBmodel.service'
+import EpubGenService from '../services/shared/EpubGen.service'
 import UtilsService from '../services/shared/Utils.service'
 import {
   IChaptersQuery,
   IDownloadQuery,
   IEpubMetaData,
   IGetChapters,
-  ILoginForm,
   IRanobe,
   IReaderContainer,
   ISearchQuery,
-  IUser,
   IUserListQuery
 } from '../tools/interfaces/Ranobelibme.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
@@ -32,36 +30,6 @@ export default class RanobeLibMeController implements IRanobeController {
     private utils: UtilsService
   ) {
     this.dbModel = new DBmodelService('RANOBELIBME')
-  }
-
-  login(): RequestHandler {
-    return async (req, res) => {
-      try {
-        const loginForm = req.body as ILoginForm
-
-        if (loginForm.email && loginForm.password) {
-          const [cookies, identifier, ranobeList] =
-            await this.ranobeLibMeService.login(loginForm)
-
-          cookies.forEach((cookie, index) => {
-            res.setHeader(`ranobelib-auth_${index}`, JSON.stringify(cookie))
-          })
-
-          const user: IUser = {
-            email: loginForm.email,
-            identifier,
-            ranobeList,
-            domain: cookies[0].domain
-          }
-
-          await this.dbModel.setLocalUser(user)
-
-          return res.json(user)
-        }
-      } catch (error) {
-        res.sendStatus(500)
-      }
-    }
   }
 
   ranobeList(): RequestHandler {

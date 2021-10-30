@@ -3,9 +3,9 @@ import path from 'path'
 import puppeteer, { Browser, Page, Protocol } from 'puppeteer'
 import PuppeteerExtra from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import { TRanobeServices } from '../../tools/types/Services.type'
-import Sessions from '../../tools/sessions.json'
 import { IRanobePatternParams } from '../../tools/interfaces/Ranobelibme.interface'
+import Sessions from '../../tools/sessions.json'
+import { TRanobeServices } from '../../tools/types/Services.type'
 
 export default class UtilsService {
   getPuppeeterStealth = async (): Promise<[Page, Browser]> => {
@@ -61,7 +61,25 @@ export default class UtilsService {
   }
 
   getCookies(service: TRanobeServices): Protocol.Network.Cookie[] {
-    const cookies = Sessions[service].cookies as Protocol.Network.Cookie[]
+    const cookies = Sessions[service]?.cookies as Protocol.Network.Cookie[]
     return cookies
+  }
+
+  async setCookies(
+    service: TRanobeServices,
+    cookies: Protocol.Network.Cookie[]
+  ): Promise<void> {
+    return new Promise((res, rej) => {
+      const filePath = path.join(__dirname, '../../tools/sessions.json')
+      const sessions = Object.assign({}, Sessions)
+      sessions[service].cookies = cookies
+
+      fs.writeFile(filePath, JSON.stringify(sessions), err => {
+        if (err) {
+          rej(err)
+        }
+        res()
+      })
+    })
   }
 }

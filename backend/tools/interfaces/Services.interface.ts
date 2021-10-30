@@ -13,6 +13,6 @@ export interface IRanobeController {
   download(): RequestHandler
 }
 
-export interface IDefaultService {
+export interface IRanobeService {
   baseUrl: string
 }
