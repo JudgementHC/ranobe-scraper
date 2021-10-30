@@ -5,8 +5,8 @@ import {
   IRanobe,
   IUser,
   IChapter
-} from '../tools/interfaces/Ranobelibme.interface'
-import { TRanobeServices } from '../tools/types/Services.type'
+} from '../../tools/interfaces/Ranobelibme.interface'
+import { TRanobeServices } from '../../tools/types/Services.type'
 import UtilsService from './Utils.service'
 
 export default class DBmodelService {

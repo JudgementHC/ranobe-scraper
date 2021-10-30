@@ -3,9 +3,9 @@ import path from 'path'
 import puppeteer, { Browser, Page, Protocol } from 'puppeteer'
 import PuppeteerExtra from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import { TRanobeServices } from '../tools/types/Services.type'
-import Sessions from '../tools/sessions.json'
-import { IRanobePatternParams } from '../tools/interfaces/Ranobelibme.interface'
+import { TRanobeServices } from '../../tools/types/Services.type'
+import Sessions from '../../tools/sessions.json'
+import { IRanobePatternParams } from '../../tools/interfaces/Ranobelibme.interface'
 
 export default class UtilsService {
   getPuppeeterStealth = async (): Promise<[Page, Browser]> => {

@@ -12,7 +12,7 @@ import {
 } from '../tools/interfaces/Ranobelibme.interface'
 import { IDefaultService } from '../tools/interfaces/Services.interface'
 import { TSearchType } from '../tools/types/Ranobelibme.type'
-import UtilsService from './Utils.service'
+import UtilsService from './shared/Utils.service'
 
 @autoInjectable()
 export default class RanobeLibMeService implements IDefaultService {

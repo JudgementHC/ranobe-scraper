@@ -3,7 +3,7 @@ import { autoInjectable } from 'tsyringe'
 import {
   IName,
   IReaderContainer
-} from '../tools/interfaces/Ranobelibme.interface'
+} from '../../tools/interfaces/Ranobelibme.interface'
 import UtilsService from './Utils.service'
 
 @autoInjectable()

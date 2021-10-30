@@ -1,5 +1,5 @@
 import { RequestHandler, Router } from 'express'
-import DBmodelService from '../../services/DBmodel.service'
+import DBmodelService from '../../services/shared/DBmodel.service'
 
 export interface IRanobeRouter {
   router: Router

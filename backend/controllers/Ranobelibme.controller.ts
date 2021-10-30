@@ -2,11 +2,11 @@ import { RequestHandler } from 'express'
 import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
-import DBmodelService from '../services/DBmodel.service'
-import EpubGenService from '../services/EpubGen.service'
+import DBmodelService from '../services/shared/DBmodel.service'
+import EpubGenService from '../services/shared/EpubGen.service'
 import RanobeLibMeService from '../services/Ranobelibme.service'
-import TempDBService from '../services/TempDB.service'
-import UtilsService from '../services/Utils.service'
+import TempDBService from '../services/shared/ChaptersDB.service'
+import UtilsService from '../services/shared/Utils.service'
 import {
   IChaptersQuery,
   IDownloadQuery,
