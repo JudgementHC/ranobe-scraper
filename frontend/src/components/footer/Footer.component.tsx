@@ -8,7 +8,7 @@ interface Props {
 export default function Footer({ style }: Props): JSX.Element {
   return (
     <Box component="footer" style={style}>
-      <Container>this is footer</Container>
+      <Container></Container>
     </Box>
   )
 }

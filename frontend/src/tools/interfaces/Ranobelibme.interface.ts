@@ -3,10 +3,11 @@ export interface IRanobelibmeIdQuery {
   title?: string
   reload?: boolean
   userId?: string
+  translate?: string
 }
 
 export interface IRanobelibmeIdDownload {
-  title: string
+  title?: string
   ranobeHrefList: string[]
   reload?: boolean
 }

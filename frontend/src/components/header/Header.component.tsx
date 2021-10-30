@@ -57,6 +57,20 @@ export default function Header({ style }: Props): JSX.Element {
     }
   }
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.keyCode == 191) {
+      event.preventDefault()
+      setModal(true)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
   return (
     <AppBar style={style} position="relative" enableColorOnDark={true}>
       <Toolbar>
