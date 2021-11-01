@@ -1,4 +1,4 @@
-import { ArrowBack, Search } from '@material-ui/icons'
+import { ArrowBack, Home, Search } from '@material-ui/icons'
 import {
   AppBar,
   Box,
@@ -8,11 +8,12 @@ import {
   Typography
 } from '@mui/material'
 import { CSSProperties, useContext, useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
+import routes from '../../routes'
 import apiAxios from '../../tools/axios'
-import { ISearchResponse } from '../../tools/responses/api.interface'
+import { ISearchResponse } from '../../tools/interfaces/Ranobelibme.interface'
 import { StoreContext } from '../../tools/store'
-import { TSearchType } from '../../tools/types/ranobelibme/SearchType.type'
+import { TSearchType } from '../../tools/types/Ranobelibme.type'
 import SearchComponent from '../search/Search.component'
 
 interface Props {
@@ -29,10 +30,14 @@ export default function Header({ style }: Props): JSX.Element {
   const [, setSnackbar] = store.snackbar
   const [loading, setLoading] = store.loading
   const [result, setResult] = useState<ISearchResponse[]>([])
+  const router = useHistory()
+
+  const serviceName = currentRoute.split('/')[1]
+  const canShowBtn =
+    !routes[0].subRoutes.find(route => route.path === currentRoute)?.service &&
+    currentRoute !== '/'
 
   const submit = async (): Promise<void> => {
-    const serviceName = currentRoute.split('/')[1]
-
     if (title && !loading) {
       setLoading(true)
       try {
@@ -74,18 +79,24 @@ export default function Header({ style }: Props): JSX.Element {
   return (
     <AppBar style={style} position="relative" enableColorOnDark={true}>
       <Toolbar>
-        <Box sx={{ display: 'flex', width: '100%' }}>
-          {currentRoute !== '/' && (
-            <>
-              <BackLink closeEvent={() => setModal(false)} />
+        <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+          {canShowBtn && (
+            <Box sx={{ mr: '20px' }}>
+              <BackLink to={serviceName} closeEvent={() => setModal(false)} />
+            </Box>
+          )}
 
-              <Button
-                onClick={() => setModal(true)}
-                style={{ marginLeft: 'auto', color: 'white' }}
-              >
-                <Search fontSize="medium"></Search>
-              </Button>
-            </>
+          <Link to="/" style={{ lineHeight: 1 }}>
+            <Home style={{ color: 'white' }} fontSize="medium"></Home>
+          </Link>
+
+          {canShowBtn && (
+            <Button
+              onClick={() => setModal(true)}
+              sx={{ ml: 'auto', color: 'white' }}
+            >
+              <Search fontSize="medium"></Search>
+            </Button>
           )}
         </Box>
       </Toolbar>
@@ -110,8 +121,9 @@ export default function Header({ style }: Props): JSX.Element {
 
 interface BackLinkProps {
   closeEvent: () => void
+  to: string
 }
-function BackLink({ closeEvent }: BackLinkProps): JSX.Element {
+function BackLink({ closeEvent, to }: BackLinkProps): JSX.Element {
   const router = useHistory()
 
   useEffect(() => {
@@ -119,12 +131,12 @@ function BackLink({ closeEvent }: BackLinkProps): JSX.Element {
   }, [])
 
   return (
-    <MaterialLink onClick={router.goBack} component="button">
+    <MaterialLink onClick={() => router.push(`/${to}`)} component="button">
       <Box display="flex" alignItems="center">
         <ArrowBack color="action"></ArrowBack>
         <Typography
           variant="h6"
-          style={{ marginLeft: 15 }}
+          style={{ marginLeft: 5 }}
           color="textPrimary"
           noWrap
         >

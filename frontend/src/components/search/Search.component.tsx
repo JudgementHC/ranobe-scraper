@@ -15,9 +15,9 @@ import { blue, grey } from '@mui/material/colors'
 import { KeyboardEvent, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { ERanobeUrls } from '../../tools/enums/Services.enum'
-import { ISearchResponse } from '../../tools/responses/api.interface'
+import { ISearchResponse } from '../../tools/interfaces/Ranobelibme.interface'
 import { StoreContext } from '../../tools/store'
-import { TSearchType } from '../../tools/types/ranobelibme/SearchType.type'
+import { TSearchType } from '../../tools/types/Ranobelibme.type'
 
 interface Props {
   title: string

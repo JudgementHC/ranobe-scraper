@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
 import apiAxios from '../../tools/axios'
 import { ISnackbar } from '../../tools/interfaces/Snackbar.interface'
-import { IRanobe } from '../../tools/responses/api.interface'
+import { IRanobe } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
 
 export default function RanobeLibMe(): JSX.Element {

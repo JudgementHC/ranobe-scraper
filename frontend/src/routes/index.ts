@@ -1,8 +1,8 @@
 import DefaultLayout from '../layouts/default.layout'
-import App from '../pages/app/App'
-import RanobeLibMe from '../pages/ranobelibme'
-import RanobeLibMeId from '../pages/ranobelibme/ranobelibme-id'
-import RanobeLibMeUser from '../pages/ranobelibme/ranobelibme-user'
+import HomePage from '../pages/Home.page'
+import RanobeLibMe from '../pages/ranobelibme/index.page'
+import RanobeLibMeId from '../pages/ranobelibme/id.page'
+import RanobeLibMeUser from '../pages/ranobelibme/user.page'
 
 const routes = [
   {
@@ -11,12 +11,13 @@ const routes = [
       {
         path: '/',
         exact: true,
-        component: App
+        component: HomePage
       },
       {
         path: '/ranobelibme',
         exact: true,
-        component: RanobeLibMe
+        component: RanobeLibMe,
+        service: true
       },
       {
         path: '/ranobelibme/ranobe/:id',

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, FC, useState } from 'react'
 import { ISnackbar } from './interfaces/Snackbar.interface'
-import { IRanobe } from './responses/api.interface'
+import { IRanobe } from './interfaces/API.interface'
 
 interface IStore {
   [key: string]: any[]

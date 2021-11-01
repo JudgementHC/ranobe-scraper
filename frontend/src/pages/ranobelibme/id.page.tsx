@@ -16,10 +16,10 @@ import {
   IRanobelibmeIdDownload,
   IRanobelibmeIdQuery
 } from '../../tools/interfaces/Ranobelibme.interface'
-import { IChapter } from '../../tools/responses/api.interface'
+import { IChapter } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
 import { yellow } from '@mui/material/colors'
-import { TGetChapters } from '../../tools/responses/api.type'
+import { TGetChapters } from '../../tools/types/API.type'
 
 interface Params {
   id: string
@@ -85,7 +85,6 @@ export default function RanobeLibMeId(): JSX.Element {
         response.chapters.forEach(ranobe => (ranobe.checked = false))
         setChapterList(response.chapters)
       } else if (responseT.length) {
-        console.info(responseT)
         setTranslate(responseT.map(el => el.trim()))
       }
     } catch (error) {
@@ -150,6 +149,8 @@ export default function RanobeLibMeId(): JSX.Element {
   }, [])
 
   useEffect(() => {
+    setChapterList([])
+    setTranslate([])
     fetchChapters()
   }, [location])
 
@@ -170,7 +171,7 @@ export default function RanobeLibMeId(): JSX.Element {
         </FormGroup>
 
         <Button
-          disabled={loading}
+          disabled={loading || !chapterList.length}
           variant="contained"
           color="primary"
           size="small"

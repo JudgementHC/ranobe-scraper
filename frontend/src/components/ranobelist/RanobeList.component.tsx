@@ -1,14 +1,14 @@
 import { Box, Divider, List, ListItem, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import { ERanobeUrls } from '../../tools/enums/Services.enum'
-import { IRanobe } from '../../tools/responses/api.interface'
+import { IRanobe } from '../../tools/interfaces/API.interface'
 import style from './RanobeList.module.scss'
 
-interface IListProps {
+interface Props {
   ranobeList: IRanobe[]
 }
 
-export default function RanobeListComponent(props: IListProps): JSX.Element {
+export default function RanobeListComponent(props: Props): JSX.Element {
   return (
     <List>
       {props.ranobeList.map((ranobe, index) => {

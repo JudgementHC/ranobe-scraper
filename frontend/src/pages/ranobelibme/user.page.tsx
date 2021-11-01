@@ -1,10 +1,10 @@
 import { Container, Typography } from '@mui/material'
-import axios, { CancelToken } from 'axios'
+import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
 import apiAxios from '../../tools/axios'
-import { IRanobe } from '../../tools/responses/api.interface'
+import { IRanobe } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
 
 interface Params {
@@ -16,14 +16,33 @@ export default function RanobeLibMeUser(): JSX.Element {
   const store = useContext(StoreContext)
   const [loading, setLoading] = store.loading
   const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
+  const location = useLocation()
+
+  const getRanobe = async () => {
+    setLoading(true)
+    try {
+      const response: IRanobe[] = await apiAxios.get('/ranobeList', {
+        cancelToken: request.token,
+        params: {
+          userId: +params.id || 0
+        }
+      })
+
+      setRanobeList(response)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const userId = +params.id || 0
-
-    getRanobe(userId, request.token, setRanobeList, setLoading)
-
     return () => request.cancel()
   }, [])
+
+  useEffect(() => {
+    getRanobe()
+  }, [location])
 
   return (
     <Container>
@@ -40,27 +59,4 @@ export default function RanobeLibMeUser(): JSX.Element {
       )}
     </Container>
   )
-}
-
-async function getRanobe(
-  userId: number,
-  token: CancelToken,
-  setRanobe: (ranobe: IRanobe[]) => void,
-  setLoading: (value: boolean) => void
-) {
-  setLoading(true)
-  try {
-    const response: IRanobe[] = await apiAxios.get('/ranobeList', {
-      cancelToken: token,
-      params: {
-        userId
-      }
-    })
-
-    setRanobe(response)
-  } catch (error) {
-    console.error(error)
-  } finally {
-    setLoading(false)
-  }
 }
