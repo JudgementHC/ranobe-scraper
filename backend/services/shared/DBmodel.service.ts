@@ -19,7 +19,7 @@ export default class DBmodelService {
   }
 
   async init(): Promise<void> {
-    const pathName = path.join(__dirname, '../database')
+    const pathName = path.join(__dirname, '../../database')
     const fileName = 'ranobe.stormdb'
     const fullPath = `${pathName}/${fileName}`
 

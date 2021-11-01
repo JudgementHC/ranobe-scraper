@@ -40,11 +40,11 @@ export default class UtilsService {
   }
 
   tempFolderPath(): string {
-    return path.join(__dirname, '../ranobe-temp')
+    return path.join(__dirname, '../../ranobe-temp')
   }
 
   ranobeFolderPath(): string {
-    return path.join(__dirname, '../ranobe')
+    return path.join(__dirname, '../../ranobe')
   }
 
   tempRanobePattern(title?: string, start?: string, end?: string): string {

@@ -9,8 +9,8 @@ export default class TempCleanerService {
   constructor(private fileAge = 3600) {}
 
   clean(): void {
-    const ranobeTemp = path.join(__dirname, '../ranobe-temp/')
-    const ranobe = path.join(__dirname, '../ranobe/')
+    const ranobeTemp = path.join(__dirname, '../../ranobe-temp/')
+    const ranobe = path.join(__dirname, '../../ranobe/')
     const config = {
       age: { seconds: this.fileAge },
       extensions: '*.*',

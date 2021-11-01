@@ -86,7 +86,7 @@ export default class RanobelibmeController implements IRanobeController {
 
         const data = await this.ranobeLibMeService.getChapters(href, translate)
         const dataT = data as IGetChapters
-        if (title && dataT?.chapters[0]?.title) {
+        if (title && dataT.chapters?.[0]?.title) {
           await this.dbModel.setChapters(
             title,
             dataT.chapters,

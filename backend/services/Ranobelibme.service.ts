@@ -64,7 +64,7 @@ export default class RanobelibmeService implements IRanobeService {
     }
 
     await page.goto(ranobeListUrl, {
-      waitUntil: 'domcontentloaded'
+      waitUntil: 'networkidle2'
     })
     await page.$('body')
 
@@ -285,22 +285,33 @@ export default class RanobelibmeService implements IRanobeService {
       const parsed = link.split('/')
       const { length } = parsed
       const volume = parsed[length - 2].replace('v', '') || 'volume not found'
-      const chapter = parsed[length - 1].replace('c', '') || 'chapter not found'
+      const chapter =
+        parsed[length - 1].split('?')[0].replace('c', '') || 'chapter not found'
       return [volume, chapter]
     }
     return ['undefind', 'undefind']
   }
 
   getChaptersRange(ranobeHrefList: string[]): { start: string; end: string } {
-    let [, start] = this.parseLink(ranobeHrefList[0])
-    let [, end] = this.parseLink(ranobeHrefList[ranobeHrefList.length - 1])
+    let [sVol, sChap] = this.parseLink(ranobeHrefList[0]).map(el => +el)
+    let [eVol, eChap] = this.parseLink(
+      ranobeHrefList[ranobeHrefList.length - 1]
+    ).map(el => +el)
 
-    if (+start && +end && +start > +end) {
-      const temp = start
-      start = end
-      end = temp
+    const isExist = sVol && sChap && eVol && eChap
+
+    if (isExist && (sVol > eVol || (sVol == eVol && sChap > eChap))) {
+      const temp = sChap
+      const tempVol = sVol
+      sChap = eChap
+      sVol = eVol
+      eChap = temp
+      eVol = tempVol
     }
 
-    return { start, end }
+    return {
+      start: `Vol ${sVol} Chap ${sChap}`,
+      end: `Vol ${eVol} Chap ${eChap}`
+    }
   }
 }

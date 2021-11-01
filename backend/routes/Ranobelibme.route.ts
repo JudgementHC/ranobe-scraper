@@ -2,6 +2,7 @@ import { Router } from 'express'
 import 'reflect-metadata'
 import { autoInjectable, container } from 'tsyringe'
 import RanobelibmeController from '../controllers/Ranobelibme.controller'
+import RanobelibmeService from '../services/Ranobelibme.service'
 import { IRanobeRouter } from '../tools/interfaces/Services.interface'
 
 /*
@@ -14,7 +15,10 @@ import { IRanobeRouter } from '../tools/interfaces/Services.interface'
 class RanobelibmeRouter implements IRanobeRouter {
   router: Router = Router()
 
-  constructor(private ranobelibmeController: RanobelibmeController) {
+  constructor(
+    private ranobelibmeController: RanobelibmeController,
+    private service: RanobelibmeService
+  ) {
     this.router.get('/search', this.ranobelibmeController.search())
 
     this.router.get('/chapters', this.ranobelibmeController.chapters())
@@ -22,6 +26,11 @@ class RanobelibmeRouter implements IRanobeRouter {
     this.router.post('/download', this.ranobelibmeController.download())
 
     this.router.get('/ranobeList', this.ranobelibmeController.ranobeList())
+
+    this.router.get('/login', async (req, res) => {
+      await this.service.login()
+      res.sendStatus(200)
+    })
   }
 }
 
