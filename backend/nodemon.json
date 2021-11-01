@@ -1,4 +1,9 @@
 {
   "verbose": true,
-  "ignore": ["node_modules/*", "ranobe/*", "ranobe-temp/*"]
+  "ignore": [
+    "node_modules/*",
+    "ranobe/*",
+    "ranobe-temp/*",
+    "tools/sessions.json"
+  ]
 }
