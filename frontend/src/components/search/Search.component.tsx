@@ -14,7 +14,7 @@ import {
 import { blue, grey } from '@mui/material/colors'
 import { KeyboardEvent, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { ERanobeUrls } from '../../tools/enums/Services.enum'
+import { EServiceUrls } from '../../tools/enums/Services.enum'
 import { ISearchResponse } from '../../tools/interfaces/Ranobelibme.interface'
 import { StoreContext } from '../../tools/store'
 import { TSearchType } from '../../tools/types/Ranobelibme.type'
@@ -110,7 +110,7 @@ export default function SearchComponent({
 
             if (type === 'user') {
               temp.title = item.value
-              temp.src = `${ERanobeUrls.RANOBELIBME}/uploads/users/${item.id}/${item.avatar}`
+              temp.src = `${EServiceUrls.RANOBELIBME}/uploads/users/${item.id}/${item.avatar}`
               temp.href = `/ranobelibme/user/${item.id}`
             } else if (type === 'manga') {
               temp.title = `${item.eng_name}\n${item.rus_name}`

@@ -10,7 +10,7 @@ import {
 import { CSSProperties, useContext, useEffect, useState } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import routes from '../../routes'
-import apiAxios from '../../tools/axios'
+import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
 import { ISearchResponse } from '../../tools/interfaces/Ranobelibme.interface'
 import { StoreContext } from '../../tools/store'
 import { TSearchType } from '../../tools/types/Ranobelibme.type'
@@ -41,12 +41,15 @@ export default function Header({ style }: Props): JSX.Element {
     if (title && !loading) {
       setLoading(true)
       try {
-        const response: ISearchResponse[] = await apiAxios.get('/search', {
-          params: {
-            title,
-            type
+        const response: ISearchResponse[] = await ranobelibmeApi.get(
+          '/search',
+          {
+            params: {
+              title,
+              type
+            }
           }
-        })
+        )
 
         setResult(response)
       } catch (error) {

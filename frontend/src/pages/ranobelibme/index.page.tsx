@@ -2,7 +2,7 @@ import { Container, Typography } from '@mui/material'
 import axios, { CancelTokenSource } from 'axios'
 import { useContext, useEffect, useState } from 'react'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
-import apiAxios from '../../tools/axios'
+import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
 import { ISnackbar } from '../../tools/interfaces/Snackbar.interface'
 import { IRanobe } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
@@ -20,7 +20,7 @@ export default function RanobeLibMe(): JSX.Element {
 
       try {
         request = axios.CancelToken.source()
-        const response: IRanobe[] = await apiAxios.get('/ranobeList', {
+        const response: IRanobe[] = await ranobelibmeApi.get('/ranobeList', {
           cancelToken: request.token,
           params: {
             local: true

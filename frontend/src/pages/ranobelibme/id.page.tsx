@@ -11,7 +11,7 @@ import axios from 'axios'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import ChapterListComponent from '../../components/chapterlist/ChapterList.component'
-import apiAxios from '../../tools/axios'
+import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
 import {
   IRanobelibmeIdDownload,
   IRanobelibmeIdQuery
@@ -74,7 +74,7 @@ export default function RanobeLibMeId(): JSX.Element {
 
     try {
       setLoading(true)
-      const response = (await apiAxios.get('/chapters', {
+      const response = (await ranobelibmeApi.get('/chapters', {
         cancelToken: request.token,
         params: paramsT,
         timeout: 0
@@ -112,11 +112,15 @@ export default function RanobeLibMeId(): JSX.Element {
     if (ranobeHrefList.length) {
       try {
         setLoading(true)
-        const response = (await apiAxios.post('/download', downloadParams, {
-          cancelToken: request.token,
-          timeout: 0,
-          responseType: 'blob'
-        })) as Blob
+        const response = (await ranobelibmeApi.post(
+          '/download',
+          downloadParams,
+          {
+            cancelToken: request.token,
+            timeout: 0,
+            responseType: 'blob'
+          }
+        )) as Blob
 
         const blob = new Blob([response], { type: 'application/epub+zip' })
         const url = window.URL.createObjectURL(blob)

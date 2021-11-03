@@ -1,6 +1,6 @@
 import { Box, Divider, List, ListItem, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
-import { ERanobeUrls } from '../../tools/enums/Services.enum'
+import { EServiceUrls } from '../../tools/enums/Services.enum'
 import { IRanobe } from '../../tools/interfaces/API.interface'
 import style from './RanobeList.module.scss'
 
@@ -29,7 +29,7 @@ export default function RanobeListComponent(props: Props): JSX.Element {
                 <div className={style.wrap}>
                   <img
                     className={style.image}
-                    src={`${ERanobeUrls.STATICLIB}/${ranobe.cover}`}
+                    src={`${EServiceUrls.STATICLIB}/${ranobe.cover}`}
                     alt={ranobe.title}
                     loading="lazy"
                   />
