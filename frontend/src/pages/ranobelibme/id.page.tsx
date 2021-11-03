@@ -16,10 +16,9 @@ import {
   IRanobelibmeIdDownload,
   IRanobelibmeIdQuery
 } from '../../tools/interfaces/Ranobelibme.interface'
-import { IChapter } from '../../tools/interfaces/API.interface'
+import { IChapter, IGetChapters } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
 import { yellow } from '@mui/material/colors'
-import { TGetChapters } from '../../tools/types/API.type'
 
 interface Params {
   id: string
@@ -78,7 +77,7 @@ export default function RanobeLibMeId(): JSX.Element {
         cancelToken: request.token,
         params: paramsT,
         timeout: 0
-      })) as TGetChapters
+      })) as IGetChapters
       const responseT = response as unknown as string[]
 
       if (response.chapters) {

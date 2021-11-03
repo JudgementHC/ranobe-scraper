@@ -12,3 +12,8 @@ export interface IChapter {
   checked: boolean
   date: string
 }
+
+export interface IGetChapters {
+  chapters: IChapter[]
+  cover: string
+}
