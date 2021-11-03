@@ -4,6 +4,7 @@ import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { Logger } from 'tslog'
+import InfinitenoveltranslationsRoute from './routes/Infinitenoveltranslations.route'
 import RanobelibmeRouter from './routes/Ranobelibme.route'
 
 /*==================== INIT START ====================*/
@@ -26,9 +27,9 @@ app.use(helmet())
 app.use(morgan('combined'))
 /* ==================== MIDDLEWARE USING END ==================== */
 
-// todo: добавить сервис для парсинга https://infinitenoveltranslations.net/nidoume-no-jinsei-wo-isekai-de/
 /* ==================== ROUTES USE START ==================== */
 app.use('/ranobelibme', RanobelibmeRouter.router)
+app.use('/infinitenoveltranslations', InfinitenoveltranslationsRoute.router)
 /* ==================== ROUTES USE END ==================== */
 
 /*==================== SERVER START ====================*/
