@@ -30,12 +30,13 @@ export default function Header({ style }: Props): JSX.Element {
   const [, setSnackbar] = store.snackbar
   const [loading, setLoading] = store.loading
   const [result, setResult] = useState<ISearchResponse[]>([])
-  const router = useHistory()
 
   const serviceName = currentRoute.split('/')[1]
-  const canShowBtn =
+
+  const backLinkShow =
     !routes[0].subRoutes.find(route => route.path === currentRoute)?.service &&
     currentRoute !== '/'
+  const searchIconShow = currentRoute !== '/'
 
   const submit = async (): Promise<void> => {
     if (title && !loading) {
@@ -83,7 +84,7 @@ export default function Header({ style }: Props): JSX.Element {
     <AppBar style={style} position="relative" enableColorOnDark={true}>
       <Toolbar>
         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-          {canShowBtn && (
+          {backLinkShow && (
             <Box sx={{ mr: '20px' }}>
               <BackLink to={serviceName} closeEvent={() => setModal(false)} />
             </Box>
@@ -93,7 +94,7 @@ export default function Header({ style }: Props): JSX.Element {
             <Home style={{ color: 'white' }} fontSize="medium"></Home>
           </Link>
 
-          {canShowBtn && (
+          {searchIconShow && (
             <Button
               onClick={() => setModal(true)}
               sx={{ ml: 'auto', color: 'white' }}
