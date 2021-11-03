@@ -1,7 +1,7 @@
 import { Browser, Page } from 'puppeteer'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
-import { ERanobeUrls } from '../tools/enums/Services.enum'
+import { ERanobeServices, ERanobeUrls } from '../tools/enums/Services.enum'
 import {
   IChapter,
   IGetChapters,
@@ -17,7 +17,7 @@ import UtilsService from './shared/Utils.service'
 export default class RanobelibmeService implements IRanobeService {
   baseUrl = ERanobeUrls.RANOBELIBME
   logger = new Logger()
-  private cookies = this.utils.getCookies('RANOBELIBME')
+  private cookies = this.utils.getCookies(ERanobeServices.RANOBELIBME)
 
   constructor(private utils: UtilsService) {}
 
@@ -48,7 +48,7 @@ export default class RanobelibmeService implements IRanobeService {
 
     await browser.close()
 
-    this.utils.setCookies('RANOBELIBME', cookies)
+    this.utils.setCookies(ERanobeServices.RANOBELIBME, cookies)
   }
 
   async getRanobeList(

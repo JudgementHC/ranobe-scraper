@@ -1,12 +1,12 @@
 import path from 'path'
 import StormDB from 'stormdb'
 import { Logger } from 'tslog'
+import { ERanobeServices } from '../../tools/enums/Services.enum'
 import {
+  IChapter,
   IRanobe,
-  IUser,
-  IChapter
+  IUser
 } from '../../tools/interfaces/Ranobelibme.interface'
-import { TRanobeServices } from '../../tools/types/Services.type'
 import UtilsService from './Utils.service'
 
 export default class DBmodelService {
@@ -14,7 +14,7 @@ export default class DBmodelService {
   private logger = new Logger()
   private utils = new UtilsService()
 
-  constructor(private serviceName: TRanobeServices) {
+  constructor(private serviceName: ERanobeServices) {
     this.init()
   }
 
@@ -43,7 +43,7 @@ export default class DBmodelService {
         .get('ranobe')
         .value() as IRanobe[]
     } catch (error) {
-      console.error(error)
+      this.logger.error(error)
     }
     return ranobeList
   }

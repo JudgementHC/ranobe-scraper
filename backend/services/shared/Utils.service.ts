@@ -3,9 +3,15 @@ import path from 'path'
 import puppeteer, { Browser, Page, Protocol } from 'puppeteer'
 import PuppeteerExtra from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import { ERanobeServices } from '../../tools/enums/Services.enum'
+import {
+  SessionParams,
+  Sessions
+} from '../../tools/interfaces/Common.interface'
 import { IRanobePatternParams } from '../../tools/interfaces/Ranobelibme.interface'
-import Sessions from '../../tools/sessions.json'
-import { TRanobeServices } from '../../tools/types/Services.type'
+import SessionsJson from '../../tools/sessions.json'
+
+const sessions = SessionsJson as unknown as Sessions
 
 export default class UtilsService {
   getPuppeeterStealth = async (): Promise<[Page, Browser]> => {
@@ -60,21 +66,25 @@ export default class UtilsService {
     }`
   }
 
-  getCookies(service: TRanobeServices): Protocol.Network.Cookie[] {
-    const cookies = Sessions[service]?.cookies as Protocol.Network.Cookie[]
+  getCookies(service: ERanobeServices): Protocol.Network.Cookie[] {
+    const serviceSession = sessions[service] as unknown as SessionParams
+    const cookies = serviceSession.cookies
     return cookies
   }
 
   async setCookies(
-    service: TRanobeServices,
+    service: ERanobeServices,
     cookies: Protocol.Network.Cookie[]
   ): Promise<void> {
     return new Promise((res, rej) => {
       const filePath = path.join(__dirname, '../../tools/sessions.json')
-      const sessions = Object.assign({}, Sessions)
-      sessions[service].cookies = cookies
+      const serviceSession = sessions[service] as unknown as SessionParams
 
-      fs.writeFile(filePath, JSON.stringify(sessions), err => {
+      const sessionsT = Object.assign({}, serviceSession)
+
+      sessionsT.cookies = cookies
+
+      fs.writeFile(filePath, JSON.stringify(sessionsT), err => {
         if (err) {
           rej(err)
         }

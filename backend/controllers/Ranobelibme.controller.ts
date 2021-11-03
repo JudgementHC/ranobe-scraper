@@ -7,6 +7,7 @@ import TempDBService from '../services/shared/ChaptersDB.service'
 import DBmodelService from '../services/shared/DBmodel.service'
 import EpubGenService from '../services/shared/EpubGen.service'
 import UtilsService from '../services/shared/Utils.service'
+import { ERanobeServices } from '../tools/enums/Services.enum'
 import {
   IChaptersQuery,
   IDownloadQuery,
@@ -29,7 +30,7 @@ export default class RanobelibmeController implements IRanobeController {
     private tempDBService: TempDBService,
     private utils: UtilsService
   ) {
-    this.dbModel = new DBmodelService('RANOBELIBME')
+    this.dbModel = new DBmodelService(ERanobeServices.RANOBELIBME)
   }
 
   ranobeList(): RequestHandler {
