@@ -1,10 +1,15 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { EServices } from '../tools/enums/Services.enum'
 
 const ranobeServiceList = [
   {
     href: '/ranobelibme',
-    title: 'Ranobelibme'
+    title: EServices.RANOBELIBME
+  },
+  {
+    href: '/infinitenoveltranslations',
+    title: EServices.INFINITENOVELTRANSLATIONS
   }
 ]
 
@@ -17,7 +22,7 @@ export default function App(): JSX.Element {
 
       <Box sx={{ display: 'flex' }}>
         {ranobeServiceList.map((service, index) => (
-          <Link key={index} to={service.href}>
+          <Link tabIndex={-1} key={index} to={service.href} style={{ marginRight: '15px' }}>
             <Button variant="contained" color="primary">
               {service.title}
             </Button>

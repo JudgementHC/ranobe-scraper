@@ -1,8 +1,10 @@
 export enum EServiceUrls {
   RANOBELIBME = 'https://ranobelib.me',
-  STATICLIB = 'https://staticlib.me'
+  STATICLIB = 'https://staticlib.me',
+  INFINITENOVELTRANSLATIONS = 'https://infinitenoveltranslations.net/'
 }
 
 export enum EServices {
-  RANOBELIBME = 'RANOBELIBME'
+  RANOBELIBME = 'RANOBELIBME',
+  INFINITENOVELTRANSLATIONS = 'infinitenoveltranslations'
 }

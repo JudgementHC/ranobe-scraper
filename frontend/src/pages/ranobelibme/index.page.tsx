@@ -1,11 +1,20 @@
 import { Container, Typography } from '@mui/material'
 import axios, { CancelTokenSource } from 'axios'
 import { useContext, useEffect, useState } from 'react'
+import { useLocation } from 'react-router'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
+import infinitenoveltranslationsApi from '../../tools/axios/infinitenoveltranslations.api'
 import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
-import { ISnackbar } from '../../tools/interfaces/Snackbar.interface'
+import { EServices, EServiceUrls } from '../../tools/enums/Services.enum'
 import { IRanobe } from '../../tools/interfaces/API.interface'
+import { ISnackbar } from '../../tools/interfaces/Snackbar.interface'
 import { StoreContext } from '../../tools/store'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const api: any = {
+  ranobelibmeApi,
+  infinitenoveltranslationsApi
+}
 
 export default function RanobeLibMe(): JSX.Element {
   const [ranobeList, setRanobeList] = useState<IRanobe[]>([])
@@ -13,6 +22,9 @@ export default function RanobeLibMe(): JSX.Element {
   const [, setSnackbar] = store.snackbar
   const [loading, setLoading] = store.loading
   let request: CancelTokenSource
+  const location = useLocation()
+  const serviceName = location.pathname.replace('/', '')
+  const apiName = `${serviceName}Api`
 
   useEffect(() => {
     const getLocalRanobe = async (): Promise<void> => {
@@ -20,12 +32,17 @@ export default function RanobeLibMe(): JSX.Element {
 
       try {
         request = axios.CancelToken.source()
-        const response: IRanobe[] = await ranobelibmeApi.get('/ranobeList', {
+        const response: IRanobe[] = await api[apiName].get('/ranobeList', {
           cancelToken: request.token,
           params: {
             local: true
           }
         })
+        if (serviceName === EServices.RANOBELIBME) {
+          response.forEach(el => {
+            el.cover = `${EServiceUrls.STATICLIB}/${el.cover}`
+          })
+        }
         setRanobeList(response)
       } catch (error) {
         console.error(error)

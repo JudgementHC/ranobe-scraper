@@ -1,10 +1,11 @@
 import DefaultLayout from '../layouts/default.layout'
 import HomePage from '../pages/Home.page'
-import RanobeLibMe from '../pages/ranobelibme/index.page'
 import RanobeLibMeId from '../pages/ranobelibme/id.page'
+import RanobeLibMe from '../pages/ranobelibme/index.page'
 import RanobeLibMeUser from '../pages/ranobelibme/user.page'
+import { IRoute } from '../tools/interfaces/Common.interface'
 
-const routes = [
+const routes: IRoute[] = [
   {
     layout: DefaultLayout,
     subRoutes: [
@@ -13,8 +14,9 @@ const routes = [
         exact: true,
         component: HomePage
       },
+
       {
-        path: '/ranobelibme',
+        path: '/:service',
         exact: true,
         component: RanobeLibMe,
         service: true

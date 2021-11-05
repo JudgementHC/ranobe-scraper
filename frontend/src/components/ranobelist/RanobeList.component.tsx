@@ -29,7 +29,7 @@ export default function RanobeListComponent(props: Props): JSX.Element {
                 <div className={style.wrap}>
                   <img
                     className={style.image}
-                    src={`${EServiceUrls.STATICLIB}/${ranobe.cover}`}
+                    src={`${ranobe.cover}`}
                     alt={ranobe.title}
                     loading="lazy"
                   />
