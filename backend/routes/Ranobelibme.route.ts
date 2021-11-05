@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import 'reflect-metadata'
+import { Logger } from 'tslog'
 import { autoInjectable, container } from 'tsyringe'
 import RanobelibmeController from '../controllers/Ranobelibme.controller'
 import RanobelibmeService from '../services/Ranobelibme.service'
@@ -28,8 +29,14 @@ class RanobelibmeRouter implements IRanobeRouter {
     this.router.get('/ranobeList', this.ranobelibmeController.ranobeList())
 
     this.router.get('/login', async (req, res) => {
-      await this.service.login()
-      res.sendStatus(200)
+      try {
+        await this.service.login()
+        return res.sendStatus(200)
+      } catch (error) {
+        const logger = new Logger()
+        logger.error(error)
+      }
+      res.sendStatus(500)
     })
   }
 }

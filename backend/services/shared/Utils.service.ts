@@ -72,6 +72,7 @@ export default class UtilsService {
     return cookies
   }
 
+  // todo: куки неверно записывает в sessions
   async setCookies(
     service: ERanobeServices,
     cookies: Protocol.Network.Cookie[]
@@ -80,11 +81,9 @@ export default class UtilsService {
       const filePath = path.join(__dirname, '../../tools/sessions.json')
       const serviceSession = sessions[service] as unknown as SessionParams
 
-      const sessionsT = Object.assign({}, serviceSession)
+      serviceSession.cookies = cookies
 
-      sessionsT.cookies = cookies
-
-      fs.writeFile(filePath, JSON.stringify(sessionsT), err => {
+      fs.writeFile(filePath, JSON.stringify(serviceSession), err => {
         if (err) {
           rej(err)
         }
