@@ -5,10 +5,10 @@ import { ERanobeServices, ERanobeUrls } from '../tools/enums/Services.enum'
 import {
   IChapter,
   IGetChapters,
-  IRanobe,
   IReaderContainer,
   ISearchResponse
 } from '../tools/interfaces/Ranobelibme.interface'
+import { IRanobe } from '../tools/interfaces/Common.interface'
 import { IRanobeService } from '../tools/interfaces/Services.interface'
 import { TSearchType } from '../tools/types/Ranobelibme.type'
 import UtilsService from './shared/Utils.service'

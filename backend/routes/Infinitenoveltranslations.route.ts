@@ -16,11 +16,6 @@ class Infinitenoveltranslations implements IRanobeRouter {
     private infinitenoveltranslationsController: InfinitenoveltranslationsController
   ) {
     this.router.get(
-      '/search',
-      this.infinitenoveltranslationsController.search()
-    )
-
-    this.router.get(
       '/chapters',
       this.infinitenoveltranslationsController.chapters()
     )

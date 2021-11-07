@@ -11,6 +11,7 @@ import { CSSProperties, useContext, useEffect, useState } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import routes from '../../routes'
 import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
+import { EServices } from '../../tools/enums/Services.enum'
 import { ISearchResponse } from '../../tools/interfaces/Ranobelibme.interface'
 import { StoreContext } from '../../tools/store'
 import { TSearchType } from '../../tools/types/Ranobelibme.type'
@@ -32,6 +33,9 @@ export default function Header({ style }: Props): JSX.Element {
   const [result, setResult] = useState<ISearchResponse[]>([])
 
   const serviceName = currentRoute.split('/')[1]
+  const withoutSearch = [EServices.INFINITENOVELTRANSLATIONS].includes(
+    serviceName as EServices
+  )
 
   const backLinkShow =
     !routes[0].subRoutes.find(route => route.path === currentRoute)?.service &&
@@ -105,20 +109,21 @@ export default function Header({ style }: Props): JSX.Element {
         </Box>
       </Toolbar>
 
-      {/* todo: необходимо добавить teleporter */}
-      <SearchComponent
-        title={title}
-        show={modal}
-        type={type}
-        typeChange={value => {
-          setType(value)
-          setResult([])
-        }}
-        closeEvent={() => setModal(false)}
-        textFieldChange={value => setTitle(value)}
-        result={result}
-        submit={submit}
-      ></SearchComponent>
+      {withoutSearch && (
+        <SearchComponent
+          title={title}
+          show={modal}
+          type={type}
+          typeChange={value => {
+            setType(value)
+            setResult([])
+          }}
+          closeEvent={() => setModal(false)}
+          textFieldChange={value => setTitle(value)}
+          result={result}
+          submit={submit}
+        ></SearchComponent>
+      )}
     </AppBar>
   )
 }

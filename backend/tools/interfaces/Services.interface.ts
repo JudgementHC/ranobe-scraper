@@ -8,7 +8,7 @@ export interface IRanobeRouter {
 export interface IRanobeController {
   dbModel: DBmodelService
 
-  search(): RequestHandler
+  search?(): RequestHandler
   chapters(): RequestHandler
   download(): RequestHandler
 }

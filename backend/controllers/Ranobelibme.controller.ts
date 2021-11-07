@@ -13,11 +13,11 @@ import {
   IDownloadQuery,
   IEpubMetaData,
   IGetChapters,
-  IRanobe,
   IReaderContainer,
   ISearchQuery,
   IUserListQuery
 } from '../tools/interfaces/Ranobelibme.interface'
+import { IRanobe } from '../tools/interfaces/Common.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()

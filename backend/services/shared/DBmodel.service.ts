@@ -2,11 +2,9 @@ import path from 'path'
 import StormDB from 'stormdb'
 import { Logger } from 'tslog'
 import { ERanobeServices } from '../../tools/enums/Services.enum'
-import {
-  IChapter,
-  IRanobe,
-  IUser
-} from '../../tools/interfaces/Ranobelibme.interface'
+import { IChapter } from '../../tools/interfaces/Ranobelibme.interface'
+import { IUser } from '../../tools/interfaces/Common.interface'
+import { IRanobe } from '../../tools/interfaces/Common.interface'
 import UtilsService from './Utils.service'
 
 export default class DBmodelService {

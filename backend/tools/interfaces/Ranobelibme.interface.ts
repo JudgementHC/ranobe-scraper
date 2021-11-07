@@ -1,4 +1,5 @@
 import { TSearchType } from '../types/Ranobelibme.type'
+import { IDefaultChaptersQuery } from './Common.interface'
 
 export interface ISearchResponse {
   id: number
@@ -24,20 +25,6 @@ export interface IReaderContainer {
   volume: string
   chapter: string
   textContent: string
-}
-
-export interface IUser {
-  email: string
-  identifier: number
-  ranobeList: IRanobe[]
-  domain?: string
-}
-
-export interface IRanobe {
-  title: string
-  href: string
-  cover: string
-  chapters?: IChapter[]
 }
 
 export interface IChapter {
@@ -94,12 +81,10 @@ export interface ISearchQuery {
   title: string
   type: TSearchType
 }
-export interface IChaptersQuery {
-  title: string
-  href: string
-  reload: boolean
+export interface IChaptersQuery extends IDefaultChaptersQuery {
   translate: string
 }
+
 export interface IDownloadQuery {
   title: string
   ranobeHrefList: string[]

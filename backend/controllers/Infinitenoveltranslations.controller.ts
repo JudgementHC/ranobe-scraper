@@ -6,6 +6,11 @@ import TempDBService from '../services/shared/ChaptersDB.service'
 import DBmodelService from '../services/shared/DBmodel.service'
 import UtilsService from '../services/shared/Utils.service'
 import { ERanobeServices } from '../tools/enums/Services.enum'
+import {
+  IDefaultChaptersQuery,
+  IRanobe
+} from '../tools/interfaces/Common.interface'
+import { IChaptersQuery } from '../tools/interfaces/Ranobelibme.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()
@@ -20,31 +25,46 @@ export default class InfinitenoveltranslationsController
     private tempDBService: TempDBService,
     private utils: UtilsService
   ) {
-    this.dbModel = new DBmodelService(ERanobeServices.RANOBELIBME)
+    this.dbModel = new DBmodelService(ERanobeServices.INFINITENOVELTRANSLATIONS)
   }
 
   ranobeList(): RequestHandler {
     return async (req, res) => {
       try {
-        const ranobeList =
-          await this.infinitenoveltranslationsService.ranobeList()
-        return res.json(ranobeList)
+        const localList = this.dbModel.getLocalList()
+        if (localList.length) {
+          return res.json(localList)
+        }
       } catch (error) {
         this.logger.error(error)
+      }
+
+      let ranobeList: IRanobe[] = []
+
+      try {
+        ranobeList = await this.infinitenoveltranslationsService.ranobeList()
+      } catch (error) {
+        this.logger.error(error)
+      }
+
+      if (ranobeList.length) {
+        try {
+          await this.dbModel.setLocalList(ranobeList)
+        } catch (error) {
+          this.logger.error(error)
+        }
+
+        return res.json(ranobeList)
       }
 
       res.sendStatus(404)
     }
   }
 
-  search(): RequestHandler {
-    return async (req, res) => {
-      res.sendStatus(404)
-    }
-  }
-
   chapters(): RequestHandler {
     return async (req, res) => {
+      const { href, title, reload } = req.body as IDefaultChaptersQuery
+
       res.sendStatus(404)
     }
   }
