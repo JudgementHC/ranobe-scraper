@@ -1,9 +1,13 @@
 import DefaultLayout from '../layouts/default.layout'
 import HomePage from '../pages/Home.page'
+import InfinitenoveltranslationsId from '../pages/infinitenoveltranslations/id.page'
 import RanobeLibMeId from '../pages/ranobelibme/id.page'
-import RanobeLibMe from '../pages/ranobelibme/index.page'
 import RanobeLibMeUser from '../pages/ranobelibme/user.page'
+import ServicePage from '../pages/Service.page'
+import { EServices } from '../tools/enums/Services.enum'
 import { IRoute } from '../tools/interfaces/Common.interface'
+
+const { INFINITENOVELTRANSLATIONS, RANOBELIBME } = EServices
 
 const routes: IRoute[] = [
   {
@@ -18,18 +22,22 @@ const routes: IRoute[] = [
       {
         path: '/:service',
         exact: true,
-        component: RanobeLibMe,
+        component: ServicePage,
         service: true
       },
+
       {
-        path: '/ranobelibme/ranobe/:id',
-        exact: false,
+        path: `/${RANOBELIBME}/ranobe/:id`,
         component: RanobeLibMeId
       },
       {
-        path: '/ranobelibme/user/:id',
-        exact: false,
+        path: `/${RANOBELIBME}/user/:id`,
         component: RanobeLibMeUser
+      },
+
+      {
+        path: `/${INFINITENOVELTRANSLATIONS}/ranobe/:id`,
+        component: InfinitenoveltranslationsId
       }
     ]
   }

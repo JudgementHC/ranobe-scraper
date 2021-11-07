@@ -4,27 +4,25 @@ import {
   Checkbox,
   Container,
   FormControlLabel,
-  FormGroup,
-  Typography
+  FormGroup
 } from '@mui/material'
 import axios from 'axios'
 import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import ChapterListComponent from '../../components/chapterlist/ChapterList.component'
-import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
+import infinitenoveltranslationsApi from '../../tools/axios/infinitenoveltranslations.api'
+import { IChapter, IGetChapters } from '../../tools/interfaces/API.interface'
 import {
   IDownload,
-  IQuery as IQuery
-} from '../../tools/interfaces/Ranobelibme.interface'
-import { IChapter, IGetChapters } from '../../tools/interfaces/API.interface'
+  IQuery
+} from '../../tools/interfaces/Infinitenoveltranslations.interface'
 import { StoreContext } from '../../tools/store'
-import { yellow } from '@mui/material/colors'
 
 interface Params {
   id: string
 }
 
-export default function RanobeLibMeId(): JSX.Element {
+export default function InfinitenoveltranslationsId(): JSX.Element {
   const [checkAll, setCheckAll] = useState(false)
   const [chapterList, setChapterList] = useState<IChapter[]>([])
   const params = useParams<Params>()
@@ -33,8 +31,6 @@ export default function RanobeLibMeId(): JSX.Element {
   const [, setSnackbar] = store.snackbar
   const [loading, setLoading] = store.loading
   const request = axios.CancelToken.source()
-  const [translate, setTranslate] = useState<string[]>([])
-  const [curTranslate, setCurTranslate] = useState<string>()
   const [title, setTitle] = useState<string | undefined>()
 
   const onCheck = (event: ChangeEvent, checked: boolean) => {
@@ -61,11 +57,10 @@ export default function RanobeLibMeId(): JSX.Element {
     await downloadRanobe()
   }
 
-  const fetchChapters = async (reload?: boolean, translate?: string) => {
+  const fetchChapters = async (reload?: boolean) => {
     const paramsT: IQuery = {
       href: params.id,
-      reload,
-      translate
+      reload
     }
     const title = new URLSearchParams(location.search).get('title') || undefined
     setTitle(title)
@@ -73,18 +68,15 @@ export default function RanobeLibMeId(): JSX.Element {
 
     try {
       setLoading(true)
-      const response = (await ranobelibmeApi.get('/chapters', {
+      const response = (await infinitenoveltranslationsApi.get('/chapters', {
         cancelToken: request.token,
         params: paramsT,
         timeout: 0
       })) as IGetChapters
-      const responseT = response as unknown as string[]
 
       if (response.chapters) {
         response.chapters.forEach(ranobe => (ranobe.checked = false))
         setChapterList(response.chapters)
-      } else if (responseT.length) {
-        setTranslate(responseT.map(el => el.trim()))
       }
     } catch (error) {
       console.error(error)
@@ -111,7 +103,7 @@ export default function RanobeLibMeId(): JSX.Element {
     if (ranobeHrefList.length) {
       try {
         setLoading(true)
-        const response = (await ranobelibmeApi.post(
+        const response = (await infinitenoveltranslationsApi.post(
           '/download',
           downloadParams,
           {
@@ -144,16 +136,12 @@ export default function RanobeLibMeId(): JSX.Element {
     }
   }
 
-  const isActiveTranslate = (translate: string): boolean =>
-    curTranslate === translate
-
   useEffect(() => {
     return () => request.cancel()
   }, [])
 
   useEffect(() => {
     setChapterList([])
-    setTranslate([])
     fetchChapters()
   }, [location])
 
@@ -194,34 +182,6 @@ export default function RanobeLibMeId(): JSX.Element {
           Reload
         </Button>
       </Box>
-
-      {!!translate.length && (
-        <>
-          <Typography mb="10px" variant="h6">
-            Translates:
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', mb: '20px' }}>
-            {translate.map((el, index) => (
-              <Button
-                variant="outlined"
-                sx={{
-                  mr: '10px',
-                  bgcolor: isActiveTranslate(el) ? yellow[800] : '',
-                  color: isActiveTranslate(el) ? 'white' : ''
-                }}
-                key={index}
-                onClick={() => {
-                  setCurTranslate(el)
-                  fetchChapters(true, el)
-                }}
-                disabled={loading}
-              >
-                {el}
-              </Button>
-            ))}
-          </Box>
-        </>
-      )}
 
       <ChapterListComponent
         chapterList={chapterList}

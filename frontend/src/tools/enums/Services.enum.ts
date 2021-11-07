@@ -5,6 +5,6 @@ export enum EServiceUrls {
 }
 
 export enum EServices {
-  RANOBELIBME = 'RANOBELIBME',
+  RANOBELIBME = 'ranobelibme',
   INFINITENOVELTRANSLATIONS = 'infinitenoveltranslations'
 }
