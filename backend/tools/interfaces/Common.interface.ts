@@ -29,3 +29,8 @@ export interface IDefaultChaptersQuery {
   href: string
   reload: boolean
 }
+
+export interface IDefaultChapter {
+  title: string
+  href: string
+}

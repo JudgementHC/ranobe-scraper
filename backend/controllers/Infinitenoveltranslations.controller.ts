@@ -10,7 +10,6 @@ import {
   IDefaultChaptersQuery,
   IRanobe
 } from '../tools/interfaces/Common.interface'
-import { IChaptersQuery } from '../tools/interfaces/Ranobelibme.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()
@@ -57,7 +56,7 @@ export default class InfinitenoveltranslationsController
         return res.json(ranobeList)
       }
 
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 
@@ -65,13 +64,13 @@ export default class InfinitenoveltranslationsController
     return async (req, res) => {
       const { href, title, reload } = req.body as IDefaultChaptersQuery
 
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 
   download(): RequestHandler {
     return async (req, res) => {
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   }
 }

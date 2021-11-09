@@ -1,5 +1,5 @@
 import { TSearchType } from '../types/Ranobelibme.type'
-import { IDefaultChaptersQuery } from './Common.interface'
+import { IDefaultChapter, IDefaultChaptersQuery } from './Common.interface'
 
 export interface ISearchResponse {
   id: number
@@ -27,9 +27,7 @@ export interface IReaderContainer {
   textContent: string
 }
 
-export interface IChapter {
-  title: string
-  href: string
+export interface IChapter extends IDefaultChapter {
   author: string
   date: string
 }

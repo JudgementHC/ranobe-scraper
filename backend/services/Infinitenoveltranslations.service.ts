@@ -1,7 +1,7 @@
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
-import { IRanobe } from '../tools/interfaces/Common.interface'
+import { IDefaultChapter, IRanobe } from '../tools/interfaces/Common.interface'
 import { IRanobeService } from '../tools/interfaces/Services.interface'
 import UtilsService from './shared/Utils.service'
 
@@ -64,7 +64,7 @@ export default class InfinitenoveltranslationsService
     return data
   }
 
-  async chapters(href: string): Promise<void> {
+  async chapters(href: string): Promise<IDefaultChapter[]> {
     const url = `${this.baseUrl}/${href}`
     // su-spoiler-closed
     const [page, browser] = await this.utils.getPuppeeterStealth()
@@ -74,19 +74,32 @@ export default class InfinitenoveltranslationsService
     })
     await page.$('body')
 
-    /*
-    const links = document.querySelectorAll(
-  '.entry-content a[href^="https://infinitenoveltranslations.net/nidoume-no-jinsei-wo-isekai-de/"]'
-);
+    const data = await page.evaluate((): IDefaultChapter[] => {
+      const chapterList: IDefaultChapter[] = []
 
-document
-  .querySelectorAll(".su-spoiler-closed")
-  .forEach(el => el.classList.remove("su-spoiler-closed"));
+      const entryContent = document.querySelector('.entry-content')
+      const httpLinks = entryContent?.querySelectorAll<HTMLLinkElement>(
+        'a[href^="http://infinitenoveltranslations.net/nidoume-no-jinsei-wo-isekai-de/"]'
+      )
+      httpLinks?.forEach(
+        el => (el.href = el.href.replace(/^http:\/\//i, 'https://'))
+      )
 
-document.querySelectorAll(".su-spoiler-content.su-u-clearfix.su-u-trim");
+      const links = entryContent?.querySelectorAll<HTMLLinkElement>(
+        'a[href^="https://infinitenoveltranslations.net/nidoume-no-jinsei-wo-isekai-de/"]'
+      )
+      links?.forEach(el => {
+        chapterList.push({
+          href: el.href,
+          title: el.textContent || ''
+        })
+      })
 
-     */
+      return chapterList
+    })
 
     await browser.close()
+
+    return data
   }
 }
