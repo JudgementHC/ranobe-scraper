@@ -68,7 +68,10 @@ export default function RanobeLibMe(): JSX.Element {
       </Typography>
 
       {ranobeList.length ? (
-        <RanobeListComponent ranobeList={ranobeList}></RanobeListComponent>
+        <RanobeListComponent
+          service={EServices.RANOBELIBME}
+          ranobeList={ranobeList}
+        ></RanobeListComponent>
       ) : (
         !loading && <Typography variant="h6">local list is empty</Typography>
       )}

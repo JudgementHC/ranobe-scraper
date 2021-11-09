@@ -23,7 +23,7 @@ export default function ServicePage(): JSX.Element {
   const [loading, setLoading] = store.loading
   let request: CancelTokenSource
   const location = useLocation()
-  const serviceName = location.pathname.replace('/', '')
+  const serviceName = location.pathname.replace('/', '') as EServices
   const apiName = `${serviceName}Api`
 
   useEffect(() => {

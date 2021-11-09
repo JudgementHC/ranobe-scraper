@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router'
 import RanobeListComponent from '../../components/ranobelist/RanobeList.component'
 import ranobelibmeApi from '../../tools/axios/ranobelibme.api'
+import { EServices } from '../../tools/enums/Services.enum'
 import { IRanobe } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
 
@@ -51,7 +52,10 @@ export default function RanobeLibMeUser(): JSX.Element {
       </Typography>
 
       {ranobeList.length ? (
-        <RanobeListComponent ranobeList={ranobeList}></RanobeListComponent>
+        <RanobeListComponent
+          service={EServices.RANOBELIBME}
+          ranobeList={ranobeList}
+        ></RanobeListComponent>
       ) : (
         !loading && (
           <Typography variant="h6">user ranobe list is empty</Typography>
