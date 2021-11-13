@@ -11,13 +11,12 @@ import { ERanobeServices } from '../tools/enums/Services.enum'
 import {
   IChaptersQuery,
   IDownloadQuery,
-  IEpubMetaData,
   IGetChapters,
   IReaderContainer,
   ISearchQuery,
   IUserListQuery
 } from '../tools/interfaces/Ranobelibme.interface'
-import { IRanobe } from '../tools/interfaces/Common.interface'
+import { IEpubMetaData, IRanobe } from '../tools/interfaces/Common.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()
@@ -120,7 +119,7 @@ export default class RanobelibmeController implements IRanobeController {
         let readerContainer: IReaderContainer[]
 
         if (!file) {
-          readerContainer = await this.ranobeLibMeService.getChapterText(
+          readerContainer = await this.ranobeLibMeService.download(
             ranobeHrefList
           )
         } else {

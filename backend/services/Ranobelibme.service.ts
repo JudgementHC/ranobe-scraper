@@ -8,7 +8,7 @@ import {
   IReaderContainer,
   ISearchResponse
 } from '../tools/interfaces/Ranobelibme.interface'
-import { IRanobe } from '../tools/interfaces/Common.interface'
+import { IRanobe, IStartEnd } from '../tools/interfaces/Common.interface'
 import { IRanobeService } from '../tools/interfaces/Services.interface'
 import { TSearchType } from '../tools/types/Ranobelibme.type'
 import UtilsService from './shared/Utils.service'
@@ -242,7 +242,7 @@ export default class RanobelibmeService implements IRanobeService {
     return data
   }
 
-  async getChapterText(ranobeHrefList: string[]): Promise<IReaderContainer[]> {
+  async download(ranobeHrefList: string[]): Promise<IReaderContainer[]> {
     const readerContainer: IReaderContainer[] = []
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
@@ -292,7 +292,7 @@ export default class RanobelibmeService implements IRanobeService {
     return ['undefind', 'undefind']
   }
 
-  getChaptersRange(ranobeHrefList: string[]): { start: string; end: string } {
+  getChaptersRange(ranobeHrefList: string[]): IStartEnd {
     let [sVol, sChap] = this.parseLink(ranobeHrefList[0]).map(el => +el)
     let [eVol, eChap] = this.parseLink(
       ranobeHrefList[ranobeHrefList.length - 1]

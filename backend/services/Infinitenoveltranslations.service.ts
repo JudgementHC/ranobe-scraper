@@ -2,9 +2,11 @@ import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
 import {
+  IDefaultReaderContainer,
   IDefaultChapter,
   IDefaultComposition,
-  IRanobe
+  IRanobe,
+  IStartEnd
 } from '../tools/interfaces/Common.interface'
 import { IRanobeService } from '../tools/interfaces/Services.interface'
 import UtilsService from './shared/Utils.service'
@@ -110,5 +112,62 @@ export default class InfinitenoveltranslationsService
     await browser.close()
 
     return data
+  }
+
+  async download(hrefList: string[]): Promise<IDefaultReaderContainer[]> {
+    const [page, browser] = await this.utils.getPuppeeterStealth()
+    const container: IDefaultReaderContainer[] = []
+
+    for (let i = 0; i < hrefList.length; i++) {
+      const href = hrefList[i]
+      await page.goto(href)
+      await page.$('body')
+
+      const textContent = await page.evaluate(() => {
+        const post = document.querySelector('div#content')?.children[0]
+        return post?.innerHTML.trim() || ''
+      })
+      const title = await page.evaluate(() => {
+        return document.querySelector('.entry-title')?.textContent?.trim() || ''
+      })
+
+      const volume =
+        href
+          .split('/')
+          .find(el => el.includes('volume'))
+          ?.split('-')[1] || ''
+
+      container.push({
+        volume,
+        title,
+        textContent,
+        chapter: title.split('–')[0] || ''
+      })
+    }
+
+    await browser.close()
+
+    return container
+  }
+
+  // FIXME: парсинг происходит неверно, вместо 168 наименование ранобе получилось 161, т.к. в ссылке 161-170
+  parseLink(link: string): string {
+    return link.split('/')[4].split('-')[1]
+  }
+
+  getChaptersRange(hrefList: string[]): IStartEnd {
+    const { length } = hrefList
+    let start = this.parseLink(hrefList[0])
+    let end = this.parseLink(hrefList[length - 1])
+
+    const isParsed = +start && +end
+
+    if (isParsed && +start > +end) {
+      const temp = start
+      start = end
+      end = temp
+    }
+
+    return { start, end }
   }
 }

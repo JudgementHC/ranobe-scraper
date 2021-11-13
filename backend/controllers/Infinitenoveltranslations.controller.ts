@@ -1,13 +1,18 @@
 import { RequestHandler } from 'express'
+import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import InfinitenoveltranslationsService from '../services/Infinitenoveltranslations.service'
 import TempDBService from '../services/shared/ChaptersDB.service'
 import DBmodelService from '../services/shared/DBmodel.service'
+import EpubGenService from '../services/shared/EpubGen.service'
 import UtilsService from '../services/shared/Utils.service'
 import { ERanobeServices } from '../tools/enums/Services.enum'
 import {
+  IDefaultReaderContainer,
   IDefaultChaptersQuery,
+  IDefaultDownloadBody,
+  IEpubMetaData,
   IRanobe
 } from '../tools/interfaces/Common.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
@@ -93,6 +98,56 @@ export default class InfinitenoveltranslationsController
 
   download(): RequestHandler {
     return async (req, res) => {
+      const { ranobeHrefList, reload, title } = req.body as IDefaultDownloadBody
+
+      const { start, end } =
+        this.infinitenoveltranslationsService.getChaptersRange(ranobeHrefList)
+
+      const fileName = this.utils.tempRanobePattern(title, start, end)
+
+      // todo: необходимо сделать общий сервис для генерации ранобе
+      try {
+        let file
+        if (!reload && fs.existsSync(fileName)) {
+          file = JSON.parse(fs.readFileSync(fileName).toString())
+        }
+
+        let readerContainer: IDefaultReaderContainer[]
+
+        if (!file) {
+          readerContainer =
+            await this.infinitenoveltranslationsService.download(ranobeHrefList)
+        } else {
+          readerContainer = file
+        }
+
+        const metadata: IEpubMetaData = {
+          title,
+          cover: 'cover.jpg',
+          images: []
+        }
+
+        await this.tempDBService.saveRanobeData(
+          { title, start, end },
+          readerContainer
+        )
+
+        const epubGenService = new EpubGenService(
+          metadata,
+          readerContainer,
+          start,
+          end
+        )
+
+        const [filePath, filename] = await epubGenService.generate()
+
+        return res.sendFile(filePath, {
+          fileName: filename
+        })
+      } catch (error) {
+        this.logger.error(error as Error)
+      }
+
       res.sendStatus(500)
     }
   }

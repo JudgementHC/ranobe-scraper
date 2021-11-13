@@ -1,8 +1,6 @@
 import fs from 'fs'
-import {
-  IEpubMetaData,
-  IReaderContainer
-} from '../../tools/interfaces/Ranobelibme.interface'
+import { IEpubMetaData } from '../../tools/interfaces/Common.interface'
+import { IReaderContainer } from '../../tools/interfaces/Ranobelibme.interface'
 import UtilsService from './Utils.service'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

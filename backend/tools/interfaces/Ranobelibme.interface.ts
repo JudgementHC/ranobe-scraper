@@ -1,5 +1,11 @@
 import { TSearchType } from '../types/Ranobelibme.type'
-import { IDefaultChapter, IDefaultChaptersQuery } from './Common.interface'
+import {
+  IDefaultReaderContainer,
+  IDefaultChapter,
+  IDefaultChaptersQuery,
+  IDefaultComposition,
+  IDefaultDownloadBody
+} from './Common.interface'
 
 export interface ISearchResponse {
   id: number
@@ -20,36 +26,12 @@ export interface ICovers {
   thumbnail: string
 }
 
-export interface IReaderContainer {
-  title: string
-  volume: string
-  chapter: string
-  textContent: string
-}
+export interface IReaderContainer extends IDefaultReaderContainer {}
 
+// todo: заменить интерфейсы, которые насследуются от дефолтных
 export interface IChapter extends IDefaultChapter {
   author: string
   date: string
-}
-
-export interface IEpubMetaData {
-  title: string
-  id?: string
-  author?: string
-  cover?: string
-  series?: string
-  sequence?: number
-  fileAs?: string
-  genre?: string
-  tags?: string
-  copyright?: string
-  publisher?: string
-  published?: string
-  language?: string
-  description?: string
-  contents?: string
-  source?: string
-  images: string[]
 }
 
 export interface ILoginForm {
@@ -83,13 +65,6 @@ export interface IChaptersQuery extends IDefaultChaptersQuery {
   translate: string
 }
 
-export interface IDownloadQuery {
-  title: string
-  ranobeHrefList: string[]
-  reload: boolean
-}
+export interface IDownloadQuery extends IDefaultDownloadBody {}
 
-export interface IGetChapters {
-  chapters: IChapter[]
-  cover: string
-}
+export interface IGetChapters extends IDefaultComposition {}
