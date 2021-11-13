@@ -11,7 +11,7 @@ import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import ChapterListComponent from '../../components/chapterlist/ChapterList.component'
 import infinitenoveltranslationsApi from '../../tools/axios/infinitenoveltranslations.api'
-import { IChapter, IGetChapters } from '../../tools/interfaces/API.interface'
+import { IChapter, IComposition } from '../../tools/interfaces/API.interface'
 import {
   IDownload,
   IQuery
@@ -72,7 +72,7 @@ export default function InfinitenoveltranslationsId(): JSX.Element {
         cancelToken: request.token,
         params: paramsT,
         timeout: 0
-      })) as IGetChapters
+      })) as IComposition
 
       if (response.chapters) {
         response.chapters.forEach(ranobe => (ranobe.checked = false))

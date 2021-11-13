@@ -16,7 +16,7 @@ import {
   IDownload,
   IQuery as IQuery
 } from '../../tools/interfaces/Ranobelibme.interface'
-import { IChapter, IGetChapters } from '../../tools/interfaces/API.interface'
+import { IChapter, IComposition } from '../../tools/interfaces/API.interface'
 import { StoreContext } from '../../tools/store'
 import { yellow } from '@mui/material/colors'
 
@@ -77,7 +77,7 @@ export default function RanobeLibMeId(): JSX.Element {
         cancelToken: request.token,
         params: paramsT,
         timeout: 0
-      })) as IGetChapters
+      })) as IComposition
       const responseT = response as unknown as string[]
 
       if (response.chapters) {

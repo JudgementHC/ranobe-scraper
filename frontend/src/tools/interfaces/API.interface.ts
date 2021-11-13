@@ -13,7 +13,7 @@ export interface IChapter {
   date: string
 }
 
-export interface IGetChapters {
+export interface IComposition {
   chapters: IChapter[]
   cover: string
 }
