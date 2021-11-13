@@ -1,6 +1,5 @@
 import Protocol from 'devtools-protocol'
 import { ERanobeServices } from '../enums/Services.enum'
-import { IChapter } from './Ranobelibme.interface'
 
 export interface Sessions {
   [key: string]: ERanobeServices
@@ -14,7 +13,7 @@ export interface IRanobe {
   title?: string | null
   href?: string | null
   cover?: string | null
-  chapters?: IChapter[]
+  chapters?: IDefaultChapter[]
 }
 
 export interface IUser {
@@ -33,4 +32,9 @@ export interface IDefaultChaptersQuery {
 export interface IDefaultChapter {
   title: string
   href: string
+}
+
+export interface IDefaultComposition {
+  chapters: IDefaultChapter[]
+  cover: string
 }

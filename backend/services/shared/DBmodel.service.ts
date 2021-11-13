@@ -2,9 +2,11 @@ import path from 'path'
 import StormDB from 'stormdb'
 import { Logger } from 'tslog'
 import { ERanobeServices } from '../../tools/enums/Services.enum'
-import { IChapter } from '../../tools/interfaces/Ranobelibme.interface'
-import { IUser } from '../../tools/interfaces/Common.interface'
-import { IRanobe } from '../../tools/interfaces/Common.interface'
+import {
+  IDefaultChapter,
+  IRanobe,
+  IUser
+} from '../../tools/interfaces/Common.interface'
 import UtilsService from './Utils.service'
 
 export default class DBmodelService {
@@ -85,7 +87,7 @@ export default class DBmodelService {
 
   setChapters = async (
     title: string,
-    chapters: IChapter[],
+    chapters: IDefaultChapter[],
     href = '',
     cover = ''
   ): Promise<void> => {
@@ -109,7 +111,9 @@ export default class DBmodelService {
     }
   }
 
-  getChapters = async (title: string): Promise<IChapter[] | undefined> => {
+  getChapters = async (
+    title: string
+  ): Promise<IDefaultChapter[] | undefined> => {
     const localList = this.getLocalList()
     const targetRanobe = localList?.find(ranobe => title === ranobe.title)
     return targetRanobe?.chapters

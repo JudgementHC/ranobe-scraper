@@ -1,7 +1,11 @@
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
-import { IDefaultChapter, IRanobe } from '../tools/interfaces/Common.interface'
+import {
+  IDefaultChapter,
+  IDefaultComposition,
+  IRanobe
+} from '../tools/interfaces/Common.interface'
 import { IRanobeService } from '../tools/interfaces/Services.interface'
 import UtilsService from './shared/Utils.service'
 
@@ -64,9 +68,8 @@ export default class InfinitenoveltranslationsService
     return data
   }
 
-  async chapters(href: string): Promise<IDefaultChapter[]> {
+  async chapters(href: string): Promise<IDefaultComposition> {
     const url = `${this.baseUrl}/${href}`
-    // su-spoiler-closed
     const [page, browser] = await this.utils.getPuppeeterStealth()
 
     await page.goto(url, {
@@ -74,8 +77,8 @@ export default class InfinitenoveltranslationsService
     })
     await page.$('body')
 
-    const data = await page.evaluate((): IDefaultChapter[] => {
-      const chapterList: IDefaultChapter[] = []
+    const data = await page.evaluate((): IDefaultComposition => {
+      const chapters: IDefaultChapter[] = []
 
       const entryContent = document.querySelector('.entry-content')
       const httpLinks = entryContent?.querySelectorAll<HTMLLinkElement>(
@@ -89,13 +92,19 @@ export default class InfinitenoveltranslationsService
         'a[href^="https://infinitenoveltranslations.net/nidoume-no-jinsei-wo-isekai-de/"]'
       )
       links?.forEach(el => {
-        chapterList.push({
+        chapters.push({
           href: el.href,
           title: el.textContent || ''
         })
       })
 
-      return chapterList
+      const cover =
+        document.querySelector('.size-full')?.getAttribute('src') || ''
+
+      return {
+        chapters,
+        cover
+      }
     })
 
     await browser.close()

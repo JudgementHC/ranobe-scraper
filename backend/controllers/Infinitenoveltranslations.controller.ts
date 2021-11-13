@@ -62,7 +62,30 @@ export default class InfinitenoveltranslationsController
 
   chapters(): RequestHandler {
     return async (req, res) => {
-      const { href, title, reload } = req.body as IDefaultChaptersQuery
+      const { href, title, reload } =
+        req.query as unknown as IDefaultChaptersQuery
+
+      if (!href) {
+        return res.sendStatus(500)
+      }
+
+      if (!reload) {
+        const chapters = await this.dbModel.getChapters(title)
+        if (chapters) return res.json(chapters)
+      }
+
+      const composition = await this.infinitenoveltranslationsService.chapters(
+        href
+      )
+      if (composition) {
+        await this.dbModel.setChapters(
+          title,
+          composition.chapters,
+          href,
+          composition.cover
+        )
+        return res.json(composition)
+      }
 
       res.sendStatus(500)
     }
