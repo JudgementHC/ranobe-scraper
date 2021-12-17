@@ -33,14 +33,14 @@ export default function Header({ style }: Props): JSX.Element {
   const [result, setResult] = useState<ISearchResponse[]>([])
 
   const serviceName = currentRoute.split('/')[1]
-  const withoutSearch = [EServices.INFINITENOVELTRANSLATIONS].includes(
-    serviceName as EServices
-  )
+
+  const withoutSearch =
+    ![EServices.INFINITENOVELTRANSLATIONS].includes(serviceName as EServices) &&
+    currentRoute !== '/'
 
   const backLinkShow =
     !routes[0].subRoutes.find(route => route.path === currentRoute)?.service &&
     currentRoute !== '/'
-  const searchIconShow = currentRoute !== '/'
 
   const submit = async (): Promise<void> => {
     if (title && !loading) {
@@ -98,7 +98,7 @@ export default function Header({ style }: Props): JSX.Element {
             <Home style={{ color: 'white' }} fontSize="medium"></Home>
           </Link>
 
-          {searchIconShow && (
+          {withoutSearch && (
             <Button
               onClick={() => setModal(true)}
               sx={{ ml: 'auto', color: 'white' }}
