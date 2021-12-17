@@ -4,6 +4,7 @@
     "node_modules/*",
     "ranobe/*",
     "ranobe-temp/*",
-    "tools/sessions.json"
+    "tools/sessions.json",
+    "database/*"
   ]
 }

@@ -1,4 +1,5 @@
 import Protocol from 'devtools-protocol'
+import { Browser } from 'puppeteer'
 import { ERanobeServices } from '../enums/Services.enum'
 
 export interface Sessions {
@@ -75,4 +76,8 @@ export interface IEpubMetaData {
   contents?: string
   source?: string
   images: string[]
+}
+
+export interface IConnectionProcess {
+  browser: Browser
 }

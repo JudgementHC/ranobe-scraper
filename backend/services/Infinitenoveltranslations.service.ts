@@ -2,9 +2,9 @@ import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeUrls } from '../tools/enums/Services.enum'
 import {
-  IDefaultReaderContainer,
   IDefaultChapter,
   IDefaultComposition,
+  IDefaultReaderContainer,
   IRanobe,
   IStartEnd
 } from '../tools/interfaces/Common.interface'
@@ -20,8 +20,8 @@ export default class InfinitenoveltranslationsService
 
   constructor(private utils: UtilsService) {}
 
-  async ranobeList(): Promise<IRanobe[]> {
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+  async ranobeList(connectionUid: string): Promise<IRanobe[]> {
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
     const urlList = ['light-novels', 'web-novels', 'completed']
     const data: IRanobe[] = []
 
@@ -70,9 +70,12 @@ export default class InfinitenoveltranslationsService
     return data
   }
 
-  async chapters(href: string): Promise<IDefaultComposition> {
+  async chapters(
+    href: string,
+    connectionUid: string
+  ): Promise<IDefaultComposition> {
     const url = `${this.baseUrl}/${href}`
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
 
     await page.goto(url, {
       waitUntil: 'domcontentloaded'
@@ -114,8 +117,11 @@ export default class InfinitenoveltranslationsService
     return data
   }
 
-  async download(hrefList: string[]): Promise<IDefaultReaderContainer[]> {
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+  async download(
+    hrefList: string[],
+    connectionUid: string
+  ): Promise<IDefaultReaderContainer[]> {
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
     const container: IDefaultReaderContainer[] = []
 
     for (let i = 0; i < hrefList.length; i++) {

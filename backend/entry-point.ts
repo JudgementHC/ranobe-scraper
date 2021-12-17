@@ -30,6 +30,7 @@ app.use(morgan('combined'))
 /* ==================== ROUTES USE START ==================== */
 app.use('/ranobelibme', RanobelibmeRouter.router)
 app.use('/infinitenoveltranslations', InfinitenoveltranslationsRoute.router)
+// app.use('/test', TestRouter.router)
 /* ==================== ROUTES USE END ==================== */
 
 /*==================== SERVER START ====================*/

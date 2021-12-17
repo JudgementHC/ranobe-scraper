@@ -2,12 +2,14 @@ import { RequestHandler } from 'express'
 import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
+import { v4 } from 'uuid'
 import RanobelibmeService from '../services/Ranobelibme.service'
 import TempDBService from '../services/shared/ChaptersDB.service'
 import DBmodelService from '../services/shared/DBmodel.service'
 import EpubGenService from '../services/shared/EpubGen.service'
 import UtilsService from '../services/shared/Utils.service'
 import { ERanobeServices } from '../tools/enums/Services.enum'
+import { IEpubMetaData, IRanobe } from '../tools/interfaces/Common.interface'
 import {
   IChaptersQuery,
   IDownloadQuery,
@@ -16,7 +18,6 @@ import {
   ISearchQuery,
   IUserListQuery
 } from '../tools/interfaces/Ranobelibme.interface'
-import { IEpubMetaData, IRanobe } from '../tools/interfaces/Common.interface'
 import { IRanobeController } from '../tools/interfaces/Services.interface'
 
 @autoInjectable()
@@ -37,19 +38,31 @@ export default class RanobelibmeController implements IRanobeController {
       const { userId, local } = req.query as unknown as IUserListQuery
       let data: IRanobe[] | undefined = []
 
-      if (local) {
-        data = this.dbModel.getLocalList()
-      } else if (userId) {
-        data = await this.ranobeLibMeService.getRanobeList(userId)
-      }
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
 
-      if (data) {
-        try {
-          this.dbModel.setLocalList(data)
-        } catch (error) {
-          this.logger.error(error)
+      try {
+        if (local) {
+          data = this.dbModel.getLocalList()
+        } else if (userId) {
+          data = await this.ranobeLibMeService.getRanobeList(
+            userId,
+            connectionUid
+          )
         }
-        return res.json(data)
+
+        if (data) {
+          try {
+            this.dbModel.setLocalList(data)
+          } catch (error) {
+            this.logger.error(error)
+          }
+          return res.json(data)
+        }
+      } catch (err) {
+        this.logger.error(err)
       }
 
       res.sendStatus(500)
@@ -60,10 +73,23 @@ export default class RanobelibmeController implements IRanobeController {
     return async (req, res) => {
       const { title, type } = req.query as unknown as ISearchQuery
 
-      if (title && type) {
-        const data = await this.ranobeLibMeService.search(title, type)
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
 
-        return res.json(data)
+      try {
+        if (title && type) {
+          const data = await this.ranobeLibMeService.search(
+            title,
+            type,
+            connectionUid
+          )
+
+          return res.json(data)
+        }
+      } catch (err) {
+        this.logger.error(err)
       }
 
       res.sendStatus(500)
@@ -75,26 +101,39 @@ export default class RanobelibmeController implements IRanobeController {
       const { title, href, reload, translate } =
         req.query as unknown as IChaptersQuery
 
-      if (href) {
-        if (!reload) {
-          const ranobe = await this.dbModel.getChapters(title)
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
 
-          if (ranobe) {
-            return res.json({ chapters: ranobe })
+      try {
+        if (href) {
+          if (!reload) {
+            const ranobe = await this.dbModel.getChapters(title)
+
+            if (ranobe) {
+              return res.json({ chapters: ranobe })
+            }
           }
-        }
 
-        const data = await this.ranobeLibMeService.getChapters(href, translate)
-        const dataT = data as IGetChapters
-        if (title && dataT.chapters?.[0]?.title) {
-          await this.dbModel.setChapters(
-            title,
-            dataT.chapters,
+          const data = await this.ranobeLibMeService.getChapters(
             href,
-            dataT.cover
+            translate,
+            connectionUid
           )
+          const dataT = data as IGetChapters
+          if (title && dataT.chapters?.[0]?.title) {
+            await this.dbModel.setChapters(
+              title,
+              dataT.chapters,
+              href,
+              dataT.cover
+            )
+          }
+          return res.json(data)
         }
-        return res.json(data)
+      } catch (err) {
+        this.logger.error(err)
       }
 
       res.sendStatus(500)
@@ -110,6 +149,11 @@ export default class RanobelibmeController implements IRanobeController {
 
       const fileName = this.utils.tempRanobePattern(title, start, end)
 
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
+
       try {
         let file
         if (!reload && fs.existsSync(fileName)) {
@@ -120,7 +164,8 @@ export default class RanobelibmeController implements IRanobeController {
 
         if (!file) {
           readerContainer = await this.ranobeLibMeService.download(
-            ranobeHrefList
+            ranobeHrefList,
+            connectionUid
           )
         } else {
           readerContainer = file

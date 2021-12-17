@@ -2,6 +2,7 @@ import { RequestHandler } from 'express'
 import fs from 'fs'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
+import { v4 } from 'uuid'
 import InfinitenoveltranslationsService from '../services/Infinitenoveltranslations.service'
 import TempDBService from '../services/shared/ChaptersDB.service'
 import DBmodelService from '../services/shared/DBmodel.service'
@@ -9,9 +10,9 @@ import EpubGenService from '../services/shared/EpubGen.service'
 import UtilsService from '../services/shared/Utils.service'
 import { ERanobeServices } from '../tools/enums/Services.enum'
 import {
-  IDefaultReaderContainer,
   IDefaultChaptersQuery,
   IDefaultDownloadBody,
+  IDefaultReaderContainer,
   IEpubMetaData,
   IRanobe
 } from '../tools/interfaces/Common.interface'
@@ -45,20 +46,27 @@ export default class InfinitenoveltranslationsController
 
       let ranobeList: IRanobe[] = []
 
-      try {
-        ranobeList = await this.infinitenoveltranslationsService.ranobeList()
-      } catch (error) {
-        this.logger.error(error)
-      }
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
 
-      if (ranobeList.length) {
+      try {
+        ranobeList = await this.infinitenoveltranslationsService.ranobeList(
+          connectionUid
+        )
+
         try {
-          await this.dbModel.setLocalList(ranobeList)
-        } catch (error) {
-          this.logger.error(error)
+          if (ranobeList.length) {
+            await this.dbModel.setLocalList(ranobeList)
+          }
+        } catch (err) {
+          this.logger.error(err)
         }
 
         return res.json(ranobeList)
+      } catch (error) {
+        this.logger.error(error)
       }
 
       res.sendStatus(500)
@@ -79,17 +87,28 @@ export default class InfinitenoveltranslationsController
         if (chapters) return res.json(chapters)
       }
 
-      const composition = await this.infinitenoveltranslationsService.chapters(
-        href
-      )
-      if (composition) {
-        await this.dbModel.setChapters(
-          title,
-          composition.chapters,
-          href,
-          composition.cover
-        )
-        return res.json(composition)
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
+
+      try {
+        const composition =
+          await this.infinitenoveltranslationsService.chapters(
+            href,
+            connectionUid
+          )
+        if (composition) {
+          await this.dbModel.setChapters(
+            title,
+            composition.chapters,
+            href,
+            composition.cover
+          )
+          return res.json(composition)
+        }
+      } catch (err) {
+        this.logger.error(err)
       }
 
       res.sendStatus(500)
@@ -105,6 +124,11 @@ export default class InfinitenoveltranslationsController
 
       const fileName = this.utils.tempRanobePattern(title, start, end)
 
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
+
       // todo: необходимо сделать общий сервис для генерации ранобе
       try {
         let file
@@ -116,7 +140,10 @@ export default class InfinitenoveltranslationsController
 
         if (!file) {
           readerContainer =
-            await this.infinitenoveltranslationsService.download(ranobeHrefList)
+            await this.infinitenoveltranslationsService.download(
+              ranobeHrefList,
+              connectionUid
+            )
         } else {
           readerContainer = file
         }

@@ -2,13 +2,13 @@ import { Browser, Page } from 'puppeteer'
 import { Logger } from 'tslog'
 import { autoInjectable } from 'tsyringe'
 import { ERanobeServices, ERanobeUrls } from '../tools/enums/Services.enum'
+import { IRanobe, IStartEnd } from '../tools/interfaces/Common.interface'
 import {
   IChapter,
   IGetChapters,
   IReaderContainer,
   ISearchResponse
 } from '../tools/interfaces/Ranobelibme.interface'
-import { IRanobe, IStartEnd } from '../tools/interfaces/Common.interface'
 import { IRanobeService } from '../tools/interfaces/Services.interface'
 import { TSearchType } from '../tools/types/Ranobelibme.type'
 import UtilsService from './shared/Utils.service'
@@ -21,11 +21,11 @@ export default class RanobelibmeService implements IRanobeService {
 
   constructor(private utils: UtilsService) {}
 
-  async login(): Promise<void> {
+  async login(connectionUid: string): Promise<void> {
     const { RANOBELIBME_LOGIN, RANOBELIBME_PASS } = process.env
     if (!RANOBELIBME_LOGIN || !RANOBELIBME_PASS) return
 
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
 
     await page.goto(this.baseUrl, {
       waitUntil: 'domcontentloaded'
@@ -53,13 +53,14 @@ export default class RanobelibmeService implements IRanobeService {
 
   async getRanobeList(
     userId: number,
+    connectionUid: string,
     page?: Page,
     browser?: Browser
   ): Promise<IRanobe[]> {
     const ranobeListUrl = `${this.baseUrl}/user/${userId}?folder=all`
 
     if (!page || !browser) {
-      ;[page, browser] = await this.utils.getPuppeeterStealth()
+      ;[page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
       await page.setCookie(...this.cookies)
     }
 
@@ -98,15 +99,17 @@ export default class RanobelibmeService implements IRanobeService {
       })
     })
 
-    await browser.close()
-
     return data
   }
 
-  async search(title: string, type: TSearchType): Promise<ISearchResponse> {
+  async search(
+    title: string,
+    type: TSearchType,
+    connectionUid: string
+  ): Promise<ISearchResponse> {
     const searchUrl = `${this.baseUrl}/search?type=${type}&q=${title}`
 
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
 
     await page.goto(searchUrl, {
       waitUntil: 'domcontentloaded'
@@ -127,11 +130,12 @@ export default class RanobelibmeService implements IRanobeService {
 
   async getChapters(
     href: string,
-    translate: string
+    translate: string,
+    connectionUid: string
   ): Promise<IGetChapters | string[]> {
     const url = `${this.baseUrl}/${href}?section=chapters`
 
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
 
     await page.setViewport({
       width: 1920,
@@ -242,9 +246,12 @@ export default class RanobelibmeService implements IRanobeService {
     return data
   }
 
-  async download(ranobeHrefList: string[]): Promise<IReaderContainer[]> {
+  async download(
+    ranobeHrefList: string[],
+    connectionUid: string
+  ): Promise<IReaderContainer[]> {
     const readerContainer: IReaderContainer[] = []
-    const [page, browser] = await this.utils.getPuppeeterStealth()
+    const [page, browser] = await this.utils.getPuppeeterStealth(connectionUid)
 
     for (const ranobeHref of ranobeHrefList) {
       try {

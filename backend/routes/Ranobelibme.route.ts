@@ -2,8 +2,10 @@ import { Router } from 'express'
 import 'reflect-metadata'
 import { Logger } from 'tslog'
 import { autoInjectable, container } from 'tsyringe'
+import { v4 } from 'uuid'
 import RanobelibmeController from '../controllers/Ranobelibme.controller'
 import RanobelibmeService from '../services/Ranobelibme.service'
+import UtilsService from '../services/shared/Utils.service'
 import { IRanobeRouter } from '../tools/interfaces/Services.interface'
 
 /*
@@ -11,14 +13,14 @@ import { IRanobeRouter } from '../tools/interfaces/Services.interface'
 */
 
 // todo: необходимо добавить type message, чтобы отправлять ошибки с бекенда на фронт
-// todo: добавь возможность прерывания процесса chromium, когда axios с фронта прекращает запрос
 @autoInjectable()
 class RanobelibmeRouter implements IRanobeRouter {
   router: Router = Router()
 
   constructor(
     private ranobelibmeController: RanobelibmeController,
-    private service: RanobelibmeService
+    private service: RanobelibmeService,
+    private utils: UtilsService
   ) {
     this.router.get('/search', this.ranobelibmeController.search())
 
@@ -29,8 +31,13 @@ class RanobelibmeRouter implements IRanobeRouter {
     this.router.get('/ranobeList', this.ranobelibmeController.ranobeList())
 
     this.router.get('/login', async (req, res) => {
+      const connectionUid = v4()
+      req.on('close', () => {
+        this.utils.removeProcess(connectionUid)
+      })
+
       try {
-        await this.service.login()
+        await this.service.login(connectionUid)
         return res.sendStatus(200)
       } catch (error) {
         const logger = new Logger()

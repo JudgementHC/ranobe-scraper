@@ -10,14 +10,20 @@ import {
 } from '../../tools/interfaces/Common.interface'
 import { IRanobePatternParams } from '../../tools/interfaces/Ranobelibme.interface'
 import SessionsJson from '../../tools/sessions.json'
+import { default as Store } from './Store.service'
 
 const sessions = SessionsJson as unknown as Sessions
 
 export default class UtilsService {
-  getPuppeeterStealth = async (): Promise<[Page, Browser]> => {
+  getPuppeeterStealth = async (
+    connectionId: string
+  ): Promise<[Page, Browser]> => {
     const puppeteer = PuppeteerExtra.use(StealthPlugin())
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
+    Store.getInstance().state.set(connectionId, {
+      browser
+    })
     return [page, browser]
   }
 
@@ -90,5 +96,12 @@ export default class UtilsService {
         res()
       })
     })
+  }
+
+  async removeProcess(connectionId: string): Promise<void> {
+    const { state } = Store.getInstance()
+    const connectionProcess = state.get(connectionId)
+    await connectionProcess?.browser.close()
+    state.delete(connectionId)
   }
 }
