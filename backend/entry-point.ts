@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import { Logger } from 'tslog'
 import InfinitenoveltranslationsRoute from './routes/Infinitenoveltranslations.route'
 import RanobelibmeRouter from './routes/Ranobelibme.route'
+import Coub from './routes/Coub.route'
 
 /*==================== INIT START ====================*/
 const app = express()
@@ -30,6 +31,7 @@ app.use(morgan('combined'))
 /* ==================== ROUTES USE START ==================== */
 app.use('/ranobelibme', RanobelibmeRouter.router)
 app.use('/infinitenoveltranslations', InfinitenoveltranslationsRoute.router)
+app.use('/coub', Coub.router)
 // app.use('/test', TestRouter.router)
 /* ==================== ROUTES USE END ==================== */
 
