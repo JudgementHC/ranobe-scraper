@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/cheerio": "^0.22.30",
     "@types/find-remove": "^2.0.1",
+    "@types/lodash": "^4.14.185",
     "@types/node-cron": "^3.0.0",
     "@types/request": "^2.48.7",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
@@ -35,6 +36,7 @@
     "find-remove": "^3.1.0",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.0",
     "nodemon": "2.0.2",

@@ -3,6 +3,7 @@ import path from 'path'
 import puppeteer, { Browser, Page, Protocol } from 'puppeteer'
 import PuppeteerExtra from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import { Logger } from 'tslog'
 import { ERanobeServices } from '../../tools/enums/Services.enum'
 import {
   SessionParams,
@@ -15,6 +16,8 @@ import { default as Store } from './Store.service'
 const sessions = SessionsJson as unknown as Sessions
 
 export default class UtilsService {
+  private logger = new Logger()
+
   getPuppeeterStealth = async (
     connectionId: string
   ): Promise<[Page, Browser]> => {
@@ -73,7 +76,9 @@ export default class UtilsService {
   }
 
   getCookies(service: ERanobeServices): Protocol.Network.Cookie[] {
-    const serviceSession = sessions[service] as unknown as SessionParams
+    const serviceSession = sessions[
+      service.toLocaleLowerCase()
+    ] as unknown as SessionParams
     const cookies = serviceSession.cookies
     return cookies
   }
@@ -86,10 +91,9 @@ export default class UtilsService {
     return new Promise((res, rej) => {
       const filePath = path.join(__dirname, '../../tools/sessions.json')
       const serviceSession = sessions[service] as unknown as SessionParams
-
       serviceSession.cookies = cookies
 
-      fs.writeFile(filePath, JSON.stringify(serviceSession), err => {
+      fs.writeFile(filePath, JSON.stringify(sessions), err => {
         if (err) {
           rej(err)
         }

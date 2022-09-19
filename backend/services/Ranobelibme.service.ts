@@ -31,23 +31,17 @@ export default class RanobelibmeService implements IRanobeService {
       waitUntil: 'domcontentloaded'
     })
 
-    await page.$('body')
+    await page.click('.button.header__sign.header__sign-in')
 
-    await page.click('#show-login-button')
-    await page.waitForSelector('#sign-in-modal')
+    await page.waitForSelector('input[name=email]')
     await page.type('input[name=email]', RANOBELIBME_LOGIN)
     await page.type('input[name=password]', RANOBELIBME_PASS)
-    await page.click('#sign-in-form .form__footer button[type=submit]')
-    await page.waitForNavigation()
-
-    await page.$('body')
+    await page.click('button[type=submit]')
 
     const cookies = (await page.cookies()).filter(
       cookie => cookie.name.charAt(0) !== '_'
     )
-
     await browser.close()
-
     this.utils.setCookies(ERanobeServices.RANOBELIBME, cookies)
   }
 
