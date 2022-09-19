@@ -110,9 +110,9 @@ export default function LoginComponent({
             </Grid>
 
             <Grid item xs={12}>
-              <Button ref={buttonRef} onClick={handleSubmit(onSubmit, onError)}>
+              {/* <Button ref={buttonRef} onClick={handleSubmit(onSubmit, onError)}>
                 Login
-              </Button>
+              </Button> */}
             </Grid>
           </Grid>
         </Box>
@@ -120,3 +120,4 @@ export default function LoginComponent({
     </div>
   )
 }
+
